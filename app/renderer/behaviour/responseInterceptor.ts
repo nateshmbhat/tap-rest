@@ -1,11 +1,8 @@
-
-import type { Metadata } from '@grpc/grpc-js'
-import type { Http2CallStream } from '@grpc/grpc-js/build/src/call-stream';
 import { get } from 'svelte/store';
 import { ProtoUtil } from '../../commons/utils';
-import { activeTabConfigStore, appConfigStore, RpcOperationMode } from '../../stores';
+import { activeTabConfigStore} from '../../stores';
 import { EditorDataFlowMode } from '../../stores/tabStore';
-import type { ResponseInfo, RpcProtoInfo } from './models';
+import type { ResponseInfo} from './models';
 import { EditorEventType } from './responseStateController';
 
 interface ResponseInterceptorCallback {

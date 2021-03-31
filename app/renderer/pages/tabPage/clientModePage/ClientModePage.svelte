@@ -8,12 +8,6 @@
 
   $: requestState = $activeTabConfigStore.clientRequestEditorState;
   $: responseState = $activeTabConfigStore.clientResponseEditorState;
-  onMount(() => {
-    activeTabConfigStore.setClientRequestEditorState({
-      ...requestState,
-      text: $activeTabConfigStore.selectedRpc!.mockRequestPayloadString
-    });
-  });
 </script>
 
 <div class="page">

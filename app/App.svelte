@@ -1,22 +1,15 @@
 <script lang="ts">
-  import TapRpc from "./renderer/components/TapRpc.svelte";
+  import TapRest from "./renderer/components/TapRest.svelte";
   import { MaterialApp } from "svelte-materialify";
   import { onMount } from "svelte";
-  import { ProtoFilesDiskStore } from "./disk_storage/protos";
-  import { ProtoUtil } from "./commons/utils";
-  import { protoImportPathsStore } from "./stores";
-
-  onMount(async () => {
-    const protoFilePaths = ProtoFilesDiskStore.fetchProtoFiles();
-    ProtoUtil.loadProtoFilesAndStartServer(
-      protoFilePaths,
-      $protoImportPathsStore
-    );
+  import { MainProcessInterface } from "./renderer/ipc/ipcMainProcessInterface";
+  onMount(() => {
+    MainProcessInterface.startServer();
   });
 </script>
 
 <MaterialApp>
-  <TapRpc />
+  <TapRest />
 </MaterialApp>
 
 <style global>

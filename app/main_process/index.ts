@@ -1,1 +1,1 @@
-export {startProxyGrpcServer } from './grpcServer'
+export {startHttpProxyServer} from './httpServer'

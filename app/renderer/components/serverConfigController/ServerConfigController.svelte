@@ -1,12 +1,11 @@
 <script lang="ts">
   import { activeTabConfigStore, appConfigStore } from '../../../stores'
-  import { Button } from 'svelte-materialify/src'
-  $: targetServer = $activeTabConfigStore.targetGrpcServerUrl
+  $: targetServer = $activeTabConfigStore.targetHttpServerUrl
 </script>
 
 <label for="target-server">Target Server :</label>
 <input
-  on:input={(e) => activeTabConfigStore.setTargetGrpcServerUrl(e.currentTarget.value)}
+  on:input={(e) => activeTabConfigStore.setTargetHttpServerUrl(e.currentTarget.value)}
   value={targetServer}
   name="target-server"
   placeholder="Target server" />

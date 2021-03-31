@@ -1,10 +1,9 @@
-import type { Server } from "@grpc/grpc-js";
 import { writable } from "svelte/store";
 export interface AppConfigModel {
-  proxyGrpcServerUrl: string;
-  proxyGrpcServer: Server | null;
-  testGrpcServer: Server | null;
-  testGrpcServerUrl: string;
+  proxyHttpServerUrl: string;
+  proxyHttpServer: any| null;
+  testHttpServer: any| null;
+  testHttpServerUrl: string;
 }
 
 export enum RpcOperationMode {
@@ -20,21 +19,21 @@ export interface RequestResponseEditorModel {
 
 function createAppConfigStore() {
   const { set, subscribe, update } = writable<AppConfigModel>({
-    proxyGrpcServerUrl: '0.0.0.0:50051',
-    proxyGrpcServer: null,
-    testGrpcServer: null,
-    testGrpcServerUrl: '0.0.0.0:9090',
+    proxyHttpServerUrl: '0.0.0.0:50051',
+    proxyHttpServer: null,
+    testHttpServer: null,
+    testHttpServerUrl: '0.0.0.0:9090',
   });
 
   return {
     subscribe,
     setConfig: (config: AppConfigModel) => set(config),
-    setProxyGrpcServerUrl: (url: string) => update((config) => ({ ...config, proxyGrpcServerUrl: url })),
-    setProxyGrpcServer: (server: Server) => update((config) => {
-      return ({ ...config, proxyGrpcServer: server });
+    setProxyHttpServerUrl: (url: string) => update((config) => ({ ...config, proxyHttpServerUrl: url })),
+    setProxyHttpServer: (server: any) => update((config) => {
+      return ({ ...config, proxyHttpServer: server });
     }),
-    setTestGrpcServer: (server: Server) => update((config) => {
-      return ({ ...config, testGrpcServer: server });
+    setTestHttpServer: (server: any) => update((config) => {
+      return ({ ...config, testHttpServer: server });
     }),
     setProtoPaths: (paths: string[]) => update(config => ({ ...config, protoPaths: paths }))
   };

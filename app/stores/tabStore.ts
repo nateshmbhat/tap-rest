@@ -1,13 +1,11 @@
 import { derived, get, writable } from "svelte/store";
-import type { RpcProtoInfo } from "../renderer/behaviour";
-import { RpcOperationMode } from "./appConfigStore";
+import { RpcOperationMode as OperationMode } from "./appConfigStore";
 import { EditorEventEmitter } from "../renderer/behaviour/responseStateController";
 
 export interface TabConfigModel {
     id: string;
-    selectedRpc: RpcProtoInfo | undefined;
-    targetGrpcServerUrl: string;
-    rpcOperationMode: RpcOperationMode;
+    targetHttpServerUrl: string;
+    operationMode: OperationMode;
     monitorRequestEditorState: MonitorRequestEditorModel;
     monitorResponseEditorState: MonitorResponseEditorModel;
     clientRequestEditorState: ClientEditorModel;
@@ -45,9 +43,8 @@ export interface MonitorResponseEditorModel {
 function getDefaultTabConfig(): TabConfigModel {
     return ({
         id: '0',
-        selectedRpc: undefined,
-        targetGrpcServerUrl: 'localhost:9090',
-        rpcOperationMode: RpcOperationMode.mockRpc,
+        targetHttpServerUrl: 'localhost:9090',
+        operationMode: OperationMode.monitor,
         monitorRequestEditorState: { text: '', eventEmitter: new EditorEventEmitter(), metadata: '{}', dataFlowMode: EditorDataFlowMode.passThrough },
         clientRequestEditorState: { text: '{}', metadata: '{}' },
         monitorResponseEditorState: { text: '', eventEmitter: new EditorEventEmitter(), dataFlowMode: EditorDataFlowMode.passThrough },
@@ -66,22 +63,16 @@ function createTabListConfigStore() {
         subscribe,
         setActiveTab: (index: number) => update((store) => ({ ...store, activeTabIndex: index })),
         setValue: async (tabConfigListModel: TabListConfigModel) => set(tabConfigListModel),
-        setActiveTabSelectedRpc: (rpcInfo: RpcProtoInfo) => update((config) => {
+        setActiveTabTargetHttpServerUrl: (url: string) => update((config) => {
             const activeTab = config.tabs[config.activeTabIndex]
             const allTabs = Array.from(config.tabs)
-            allTabs[config.activeTabIndex] = { ...activeTab, selectedRpc: rpcInfo }
+            allTabs[config.activeTabIndex] = { ...activeTab, targetHttpServerUrl: url }
             return { ...config, tabs: allTabs }
         }),
-        setActiveTabTargetGrpcServerUrl: (url: string) => update((config) => {
+        setActiveTabRpcOperationMode: (mode: OperationMode) => update(config => {
             const activeTab = config.tabs[config.activeTabIndex]
             const allTabs = Array.from(config.tabs)
-            allTabs[config.activeTabIndex] = { ...activeTab, targetGrpcServerUrl: url }
-            return { ...config, tabs: allTabs }
-        }),
-        setActiveTabRpcOperationMode: (mode: RpcOperationMode) => update(config => {
-            const activeTab = config.tabs[config.activeTabIndex]
-            const allTabs = Array.from(config.tabs)
-            allTabs[config.activeTabIndex] = { ...activeTab, rpcOperationMode: mode }
+            allTabs[config.activeTabIndex] = { ...activeTab, operationMode: mode }
             return { ...config, tabs: allTabs }
         }),
         setActiveTabRequestEditorState: (requestEditorModel: MonitorRequestEditorModel) => update((config) => {
@@ -140,12 +131,8 @@ function createActiveTabConfigStore() {
 
     return {
         subscribe,
-        setSelectedRpc: (rpcInfo: RpcProtoInfo) => {
-            console.log("Seleted RPC : ", rpcInfo.methodName)
-            return tabListConfigStore.setActiveTabSelectedRpc(rpcInfo);
-        },
-        setTargetGrpcServerUrl: (url: string) => tabListConfigStore.setActiveTabTargetGrpcServerUrl(url),
-        setRpcOperationMode: async (mode: RpcOperationMode) => {
+        setTargetHttpServerUrl: (url: string) => tabListConfigStore.setActiveTabTargetHttpServerUrl(url),
+        setRpcOperationMode: async (mode: OperationMode) => {
             tabListConfigStore.setActiveTabRpcOperationMode(mode);
         },
         setRequestEditorState: (editorModel: MonitorRequestEditorModel) => tabListConfigStore.setActiveTabRequestEditorState(editorModel),
