@@ -1,25 +1,12 @@
 import { writable } from "svelte/store";
-export interface AppConfigModel {
-  proxyHttpServerUrl: string;
-  proxyHttpServer: any| null;
-  testHttpServer: any| null;
-  testHttpServerUrl: string;
-}
+import type http from 'http'
+import type { AppConfigModel } from "../commons/types";
 
-export enum RpcOperationMode {
-  mockRpc = 'mockRpc',
-  monitor = 'monitor',
-  client = 'client',
-}
-
-export interface RequestResponseEditorModel {
-  requestText: string;
-  responseText: string;
-}
 
 function createAppConfigStore() {
   const { set, subscribe, update } = writable<AppConfigModel>({
-    proxyHttpServerUrl: '0.0.0.0:50051',
+    proxyHttpServerHost: '0.0.0.0',
+    proxyHttpServerPort: 50052,
     proxyHttpServer: null,
     testHttpServer: null,
     testHttpServerUrl: '0.0.0.0:9090',
@@ -28,7 +15,7 @@ function createAppConfigStore() {
   return {
     subscribe,
     setConfig: (config: AppConfigModel) => set(config),
-    setProxyHttpServerUrl: (url: string) => update((config) => ({ ...config, proxyHttpServerUrl: url })),
+    setProxyHttpServerUrl: (url: string) => update((config) => ({ ...config, proxyHttpServerHost: url })),
     setProxyHttpServer: (server: any) => update((config) => {
       return ({ ...config, proxyHttpServer: server });
     }),

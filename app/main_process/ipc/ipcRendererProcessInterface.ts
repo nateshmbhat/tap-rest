@@ -1,19 +1,10 @@
 import { IpcChannel } from "../../commons/ipc/ipcChannelInterface"
 import { IpcRendererService } from "./ipcRendererService"
-
-interface TransformedResponse {
-    message: Object
-}
-
+import type { IncomingRequest, TransformedResponse } from "../../commons";
 export class RendererProcessInterface {
-    static async onRequest(requestObject: any, metadata: any, serviceName: string, methodName: string): Promise<TransformedResponse> {
-        const ipcResponse = await IpcRendererService.send<{ data: Object }>(IpcChannel.onRequest, {
-            params: {
-                requestObject,
-                metadata,
-                serviceName,
-                methodName
-            }
+    static async onRequest(request: IncomingRequest): Promise<TransformedResponse> {
+        const ipcResponse = await IpcRendererService.send<{ data: string }>(IpcChannel.onRequest, {
+            params: request
         })
         return { message: ipcResponse.data };
     }

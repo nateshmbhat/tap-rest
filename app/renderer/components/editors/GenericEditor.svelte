@@ -1,6 +1,5 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-
   import { AceEditor } from "svelte-ace";
   require("brace/mode/json");
   require("brace/theme/chrome");

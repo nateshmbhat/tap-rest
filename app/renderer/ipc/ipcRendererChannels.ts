@@ -1,8 +1,9 @@
 import type { IpcRendererEvent } from "electron/main";
 import { requestInterceptor, responseInterceptor } from "../behaviour";
 import { IpcChannel, IpcRendererChannelInterface, IpcRequest } from "../../commons/ipc/ipcChannelInterface";
-import { activeTabConfigStore, appConfigStore, RpcOperationMode} from "../../stores";
+import { activeTabConfigStore } from "../../stores";
 import { get } from "svelte/store";
+import { IncomingRequest, OperationMode } from "../../commons/types";
 
 export class RequestHandlerChannel implements IpcRendererChannelInterface {
     getName(): string {
@@ -13,18 +14,22 @@ export class RequestHandlerChannel implements IpcRendererChannelInterface {
         if (!request.responseChannel) {
             request.responseChannel = `${this.getName()}_response`;
         }
-        const { requestData }: { requestData: any } = request.params
         const activeTabConfig = get(activeTabConfigStore)
+        const req: IncomingRequest = request.params
 
+        activeTabConfigStore.setMonitorRequestEditorState({
+            ...activeTabConfig.monitorRequestEditorState,
+            incomingRequest: req
+        })
         // rpc call was meant for active tab
-        if (activeTabConfig.operationMode == RpcOperationMode.monitor) {
+        if (activeTabConfig.operationMode == OperationMode.monitor) {
             this.handleRequestInMonitorMode(request, event);
         }
-        else if (activeTabConfig.operationMode == RpcOperationMode.client) {
+        else if (activeTabConfig.operationMode == OperationMode.client) {
             this.handleRequestInClientMode(request, event);
         }
-        else if (activeTabConfig.operationMode == RpcOperationMode.mockRpc) {
-            this.hanldeRequestInMockRpcMode(request, event);
+        else if (activeTabConfig.operationMode == OperationMode.mockRpc) {
+            this.handleRequestInMockRpcMode(request, event);
         }
     }
 
@@ -33,10 +38,9 @@ export class RequestHandlerChannel implements IpcRendererChannelInterface {
     }
 
     private async handleRequestInMonitorMode(request: IpcRequest, event: IpcRendererEvent) {
-        const { requestObject }: { requestObject: any } = request.params
-
+        const req: IncomingRequest = request.params
         requestInterceptor({
-            requestMessage: requestObject,
+            requestMessage: req,
         })
             .then(responseInfo =>
                 responseInterceptor({ responseMessage: responseInfo })
@@ -45,7 +49,8 @@ export class RequestHandlerChannel implements IpcRendererChannelInterface {
             });
     }
 
-    private async hanldeRequestInMockRpcMode(request: IpcRequest, event: IpcRendererEvent) {
+    private async handleRequestInMockRpcMode(request: IpcRequest, event: IpcRendererEvent) {
+        const req: IncomingRequest = request.params
         const mockResponse = get(activeTabConfigStore).mockRpcEditorText
         event.sender.send(request.responseChannel!, { data: JSON.parse(mockResponse) })
     }

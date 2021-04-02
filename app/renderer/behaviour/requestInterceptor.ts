@@ -1,31 +1,27 @@
 import { get } from 'svelte/store';
+import { EditorDataFlowMode, IncomingRequest } from '../../commons';
 import { ProtoUtil } from '../../commons/utils';
 import { activeTabConfigStore } from '../../stores';
-import { EditorDataFlowMode } from '../../stores/tabStore';
 import { ClientManager } from './clientManager';
 import type { ResponseInfo } from './models';
 import { EditorEventType } from './responseStateController';
 
 interface RequestInterceptorCallback {
-    requestMessage: Object,
+    requestMessage: IncomingRequest,
 }
 
-
-export function requestInterceptor({ requestMessage}: RequestInterceptorCallback): Promise<ResponseInfo> {
-    const responsePromise = new Promise<ResponseInfo>(async (resolve, reject) => {
+export function requestInterceptor({ requestMessage }: RequestInterceptorCallback): Promise<ResponseInfo> {
+    return new Promise<ResponseInfo>(async (resolve, reject) => {
         const config = get(activeTabConfigStore)
         console.log('request message : ', requestMessage)
-        const metadata = '{}'
-        activeTabConfigStore.setRequestEditorState({
+        activeTabConfigStore.setMonitorRequestEditorState({
             ...config.monitorRequestEditorState,
-            metadata: metadata,
             text: ProtoUtil.stringify(requestMessage)
         })
         const transformedRequest = await requestTransformer({ requestMessage })
         console.log('transformedRequest : ', transformedRequest)
         ClientManager.sendRequest()
     });
-    return responsePromise;
 }
 
 

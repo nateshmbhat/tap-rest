@@ -1,10 +1,14 @@
 <script lang="ts">
   import TapRest from "./renderer/components/TapRest.svelte";
   import { MaterialApp } from "svelte-materialify";
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { MainProcessInterface } from "./renderer/ipc/ipcMainProcessInterface";
+  import { appConfigStore } from "./stores";
   onMount(() => {
     MainProcessInterface.startServer();
+  });
+  onDestroy(() => {
+    $appConfigStore.proxyHttpServer?.close();
   });
 </script>
 
@@ -18,9 +22,8 @@
   }
   html,
   body {
-    position: relative;
     width: 100%;
-    height: 100%;
+    height: 100vh;
   }
 
   label {

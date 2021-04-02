@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
+import { EditorDataFlowMode } from '../../commons/types';
 import { ProtoUtil } from '../../commons/utils';
 import { activeTabConfigStore} from '../../stores';
-import { EditorDataFlowMode } from '../../stores/tabStore';
 import type { ResponseInfo} from './models';
 import { EditorEventType } from './responseStateController';
 
@@ -11,7 +11,7 @@ interface ResponseInterceptorCallback {
 
 export async function responseInterceptor({ responseMessage }: ResponseInterceptorCallback): Promise<ResponseInfo> {
     const activeTabConfig = get(activeTabConfigStore)
-    activeTabConfigStore.setResponseEditorState({ ...activeTabConfig.monitorResponseEditorState, text: ProtoUtil.stringify(responseMessage.data) })
+    activeTabConfigStore.setMonitorResponseEditorState({ ...activeTabConfig.monitorResponseEditorState, text: ProtoUtil.stringify(responseMessage.data) })
     const transformedResponse = await transformResponse({ response: responseMessage })
     return transformedResponse
 }

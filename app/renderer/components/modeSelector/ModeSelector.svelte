@@ -7,11 +7,11 @@
     //@ts-ignore
     ButtonGroupItem,
   } from 'svelte-materialify/src'
-  import { activeTabConfigStore, RpcOperationMode } from '../../../stores'
+  import { activeTabConfigStore, OperationMode } from '../../../stores'
   let modeIndex: number = 0
 
-  const modes = Object.values(RpcOperationMode)
-  $: currentMode = $activeTabConfigStore.rpcOperationMode
+  const modes = Object.values(OperationMode)
+  $: currentMode = $activeTabConfigStore.OperationMode
   $: console.log('current mode : ', currentMode)
 
   $: console.log(
@@ -32,8 +32,8 @@
     const selectedModeIndex = e.detail
     if (selectedModeIndex == null || selectedModeIndex < 0) return
     modeIndex = selectedModeIndex
-    const selectedValue = RpcOperationMode[modes[modeIndex]]
-    activeTabConfigStore.setRpcOperationMode(selectedValue)
+    const selectedValue = OperationMode[modes[modeIndex]]
+    activeTabConfigStore.setOperationMode(selectedValue)
   }
 </script>
 

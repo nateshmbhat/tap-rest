@@ -1,55 +1,26 @@
 import { derived, get, writable } from "svelte/store";
-import { RpcOperationMode as OperationMode } from "./appConfigStore";
 import { EditorEventEmitter } from "../renderer/behaviour/responseStateController";
-
-export interface TabConfigModel {
-    id: string;
-    targetHttpServerUrl: string;
-    operationMode: OperationMode;
-    monitorRequestEditorState: MonitorRequestEditorModel;
-    monitorResponseEditorState: MonitorResponseEditorModel;
-    clientRequestEditorState: ClientEditorModel;
-    clientResponseEditorState: ClientEditorModel;
-    mockRpcEditorText: string;
-}
-
-export interface ClientEditorModel {
-    text: string;
-    metadata: string;
-}
-export interface TabListConfigModel {
-    tabs: TabConfigModel[];
-    activeTabIndex: number;
-}
-
-///Enum only applicable for editor when it "not in client mode"
-export enum EditorDataFlowMode {
-    passThrough, liveEdit
-}
-
-export interface MonitorRequestEditorModel {
-    text: string;
-    metadata: string;
-    eventEmitter: EditorEventEmitter;
-    dataFlowMode: EditorDataFlowMode;
-}
-
-export interface MonitorResponseEditorModel {
-    text: string;
-    eventEmitter: EditorEventEmitter;
-    dataFlowMode: EditorDataFlowMode;
-}
+import type { ClientEditorModel, MonitorRequestEditorModel, MonitorResponseEditorModel, TabConfigModel, TabListConfigModel, } from "../commons";
+import { OperationMode, EditorDataFlowMode } from "../commons/types";
 
 function getDefaultTabConfig(): TabConfigModel {
     return ({
         id: '0',
         targetHttpServerUrl: 'localhost:9090',
         operationMode: OperationMode.monitor,
-        monitorRequestEditorState: { text: '', eventEmitter: new EditorEventEmitter(), metadata: '{}', dataFlowMode: EditorDataFlowMode.passThrough },
+        monitorRequestEditorState: {
+            text: '',
+            // incomingRequest: {
+            //     body: '{}', headers: {}, hostname: '', method: 'GET', path: '', query: {},
+            //     url: '', trailers: {}
+            // },
+            eventEmitter: new EditorEventEmitter(),
+            dataFlowMode: EditorDataFlowMode.passThrough,
+        },
         clientRequestEditorState: { text: '{}', metadata: '{}' },
         monitorResponseEditorState: { text: '', eventEmitter: new EditorEventEmitter(), dataFlowMode: EditorDataFlowMode.passThrough },
         clientResponseEditorState: { text: '', metadata: '{}' },
-        mockRpcEditorText: '{}'
+        mockRpcEditorText: 'Coming Soon...'
     });
 }
 
@@ -69,19 +40,19 @@ function createTabListConfigStore() {
             allTabs[config.activeTabIndex] = { ...activeTab, targetHttpServerUrl: url }
             return { ...config, tabs: allTabs }
         }),
-        setActiveTabRpcOperationMode: (mode: OperationMode) => update(config => {
+        setActiveTabOperationMode: (mode: OperationMode) => update(config => {
             const activeTab = config.tabs[config.activeTabIndex]
             const allTabs = Array.from(config.tabs)
             allTabs[config.activeTabIndex] = { ...activeTab, operationMode: mode }
             return { ...config, tabs: allTabs }
         }),
-        setActiveTabRequestEditorState: (requestEditorModel: MonitorRequestEditorModel) => update((config) => {
+        setActiveTabMonitorRequestEditorState: (requestEditorModel: MonitorRequestEditorModel) => update((config) => {
             const activeTab = config.tabs[config.activeTabIndex]
             const allTabs = Array.from(config.tabs)
             allTabs[config.activeTabIndex] = { ...activeTab, monitorRequestEditorState: requestEditorModel }
             return { ...config, tabs: allTabs }
         }),
-        setActiveTabResponseEditorState: (responseEditorModel: MonitorResponseEditorModel) => update((config) => {
+        setActiveTabMonitorResponseEditorState: (responseEditorModel: MonitorResponseEditorModel) => update((config) => {
             const activeTab = config.tabs[config.activeTabIndex]
             const allTabs = Array.from(config.tabs)
             allTabs[config.activeTabIndex] = { ...activeTab, monitorResponseEditorState: responseEditorModel }
@@ -132,11 +103,11 @@ function createActiveTabConfigStore() {
     return {
         subscribe,
         setTargetHttpServerUrl: (url: string) => tabListConfigStore.setActiveTabTargetHttpServerUrl(url),
-        setRpcOperationMode: async (mode: OperationMode) => {
-            tabListConfigStore.setActiveTabRpcOperationMode(mode);
+        setOperationMode: async (mode: OperationMode) => {
+            tabListConfigStore.setActiveTabOperationMode(mode);
         },
-        setRequestEditorState: (editorModel: MonitorRequestEditorModel) => tabListConfigStore.setActiveTabRequestEditorState(editorModel),
-        setResponseEditorState: (editorModel: MonitorResponseEditorModel) => tabListConfigStore.setActiveTabResponseEditorState(editorModel),
+        setMonitorRequestEditorState: (editorModel: MonitorRequestEditorModel) => tabListConfigStore.setActiveTabMonitorRequestEditorState(editorModel),
+        setMonitorResponseEditorState: (editorModel: MonitorResponseEditorModel) => tabListConfigStore.setActiveTabMonitorResponseEditorState(editorModel),
         setClientRequestEditorState: (editorModel: ClientEditorModel) => tabListConfigStore.setActiveTabClientRequestEditorState(editorModel),
         setClientResponseEditorState: (editorModel: ClientEditorModel) => tabListConfigStore.setActiveTabClientResponseEditorState(editorModel),
         setMockRpcEditorText: (text: string) => tabListConfigStore.setActiveTabMockRpcEditorText(text),

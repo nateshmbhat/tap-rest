@@ -14,7 +14,7 @@
   import RequestEditor from './editor/RequestEditor.svelte'
   import ResponseEditor from './editor/ResponseEditor.svelte'
   import TargetServerField from './testing/TargetServerField.svelte'
-  import SetRpcOperationMode from './testing/SetRpcOperationMode.svelte'
+  import SetOperationMode from './testing/SetOperationMode.svelte'
   import ClientSimulator from './testing/ClientSimulator.svelte'
   import RpcSelector from './rpcSelector/RpcSelector.svelte'
   import { fade } from 'svelte/transition'
@@ -48,7 +48,7 @@
   <MetadataEditor width="50%" height="300" />
   <TargetServerField />
   <ClientSimulator />
-  <SetRpcOperationMode />
+  <SetOperationMode />
 {:else}
   <div transition:fade>
     <RpcSelector />

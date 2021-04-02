@@ -1,10 +1,9 @@
 import { remote } from "electron";
 import type { OpenDialogReturnValue } from "electron/main";
 import faker from 'faker';
-import type { TabConfigModel } from "../../stores/tabStore";
-import { get } from "svelte/store";
+import type { TabConfigModel } from "../types";
 
-export class ProtoUtil {
+export class StringUtil {
     static stringify(message: any, indentSpace = 2): string {
         return JSON.stringify(message, null, indentSpace)
     }

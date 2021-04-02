@@ -1,11 +1,12 @@
 <script>
-  import { activeTabConfigStore, RpcOperationMode } from "../../../stores";
+  import { activeTabConfigStore } from "../../../stores";
   import ClientModePage from "./clientModePage/ClientModePage.svelte";
   import MonitorModePage from "./monitorModePage/MonitorModePage.svelte";
   import MockRpcModePage from "./mockRpcModePage/MockRpcModePage.svelte";
   import { Tabs, TabContent, Tab } from "svelte-materialify/src";
+  import { OperationMode } from "../../../commons/types";
 
-  const allModes = Object.values(RpcOperationMode);
+  const allModes = Object.values(OperationMode);
   console.log(
     "value = ",
     allModes.indexOf($activeTabConfigStore.operationMode)
@@ -13,7 +14,7 @@
   const changeMode = (e: CustomEvent<number>) => {
     const newMode = allModes[e.detail];
     console.log("new mode = ", newMode);
-    activeTabConfigStore.setRpcOperationMode(newMode);
+    activeTabConfigStore.setOperationMode(newMode);
   };
 </script>
 
