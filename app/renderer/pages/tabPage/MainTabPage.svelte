@@ -1,56 +1,50 @@
 <script>
-  import {
-    activeTabConfigStore,
-    RpcOperationMode,
-  } from '../../../stores'
-  import TabInitializerPage from './initializerPage/TabInitializerPage.svelte'
-  import ClientModePage from './clientModePage/ClientModePage.svelte'
-  import MonitorModePage from './monitorModePage/MonitorModePage.svelte'
-  import MockRpcModePage from './mockRpcModePage/MockRpcModePage.svelte'
-  import { Tabs, TabContent, Tab } from 'svelte-materialify/src'
+  import { activeTabConfigStore } from "../../../stores";
+  import ClientModePage from "./clientModePage/ClientModePage.svelte";
+  import MonitorModePage from "./monitorModePage/MonitorModePage.svelte";
+  import MockRpcModePage from "./mockRpcModePage/MockRpcModePage.svelte";
+  import { Tabs, TabContent, Tab } from "svelte-materialify/src";
+  import { OperationMode } from "../../../commons/types";
 
-  const allModes = Object.values(RpcOperationMode)
+  const allModes = Object.values(OperationMode);
   console.log(
-    'value = ',
-    allModes.indexOf($activeTabConfigStore.rpcOperationMode),
-  )
+    "value = ",
+    allModes.indexOf($activeTabConfigStore.operationMode)
+  );
   const changeMode = (e: CustomEvent<number>) => {
-    const newMode = allModes[e.detail]
-    console.log('new mode = ', newMode)
-    activeTabConfigStore.setRpcOperationMode(newMode)
-  }
+    const newMode = allModes[e.detail];
+    console.log("new mode = ", newMode);
+    activeTabConfigStore.setOperationMode(newMode);
+  };
 </script>
 
-{#if $activeTabConfigStore.selectedRpc}
-  <div>
-    <Tabs
-      vertical
-      class="primary-text"
-      on:change={changeMode}
-      value={allModes.indexOf($activeTabConfigStore.rpcOperationMode)}>
-      <div slot="tabs">
-        {#each allModes as mode, i (mode)}
-          <Tab value={i}>
-            <div style='text-transform:capitalize;'>{mode}</div>
-          </Tab>
-        {/each}
-      </div>
-      <div class="ma-1">
-        <TabContent>
-          <MockRpcModePage />
-        </TabContent>
-        <TabContent>
-          <MonitorModePage />
-        </TabContent>
-        <TabContent>
-          <ClientModePage />
-        </TabContent>
-      </div>
-
-    </Tabs>
-  </div>
-{:else}
-  <div>
+<div>
+  <Tabs
+    vertical
+    class="primary-text"
+    on:change={changeMode}
+    value={allModes.indexOf($activeTabConfigStore.operationMode)}
+  >
+    <div slot="tabs">
+      {#each allModes as mode, i (mode)}
+        <Tab value={i}>
+          <div style="text-transform:capitalize;">{mode}</div>
+        </Tab>
+      {/each}
+    </div>
+    <div class="ma-1">
+      <TabContent>
+        <MockRpcModePage />
+      </TabContent>
+      <TabContent>
+        <MonitorModePage />
+      </TabContent>
+      <TabContent>
+        <ClientModePage />
+      </TabContent>
+    </div>
+  </Tabs>
+</div>
+<!-- <div>
     <TabInitializerPage />
-  </div>
-{/if}
+  </div> -->

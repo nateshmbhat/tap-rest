@@ -1,28 +1,21 @@
-
-import type { Metadata } from '@grpc/grpc-js'
-import type { Http2CallStream } from '@grpc/grpc-js/build/src/call-stream';
 import { get } from 'svelte/store';
+import { EditorDataFlowMode, IncomingResponse } from '../../commons/types';
 import { ProtoUtil } from '../../commons/utils';
-import { activeTabConfigStore, appConfigStore, RpcOperationMode } from '../../stores';
-import { EditorDataFlowMode } from '../../stores/tabStore';
-import type { ResponseInfo, RpcProtoInfo } from './models';
+import { activeTabConfigStore} from '../../stores';
 import { EditorEventType } from './responseStateController';
 
-interface ResponseInterceptorCallback {
-    responseMessage: ResponseInfo
-}
 
-export async function responseInterceptor({ responseMessage }: ResponseInterceptorCallback): Promise<ResponseInfo> {
+export async function responseInterceptor(response:IncomingResponse): Promise<IncomingResponse> {
     const activeTabConfig = get(activeTabConfigStore)
-    activeTabConfigStore.setResponseEditorState({ ...activeTabConfig.monitorResponseEditorState, text: ProtoUtil.stringify(responseMessage.data) })
-    const transformedResponse = await transformResponse({ response: responseMessage })
+    // activeTabConfigStore.setMonitorResponseEditorState({ ...activeTabConfig.monitorResponseEditorState, text: ProtoUtil.stringify(responseMessage) })
+    const transformedResponse = await transformResponse({response})
     return transformedResponse
 }
 
-interface ResponseTransformerInput { response: ResponseInfo }
+interface ResponseTransformerInput { response: IncomingResponse }
 
-async function transformResponse(transformerInput: ResponseTransformerInput): Promise<ResponseInfo> {
-    const transformedResponse = await new Promise<ResponseInfo>(async (resolve, reject) => {
+async function transformResponse(transformerInput: ResponseTransformerInput): Promise<IncomingResponse> {
+    const transformedResponse = await new Promise<IncomingResponse>(async (resolve, reject) => {
         const activeTab = get(activeTabConfigStore)
         if (activeTab.monitorResponseEditorState.dataFlowMode == EditorDataFlowMode.passThrough) {
             resolve(transformerInput.response)

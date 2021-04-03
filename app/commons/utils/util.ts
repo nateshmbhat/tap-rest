@@ -1,49 +1,17 @@
 import { remote } from "electron";
 import type { OpenDialogReturnValue } from "electron/main";
-import { loadProtos, RpcProtoInfo } from "../../renderer/behaviour";
-import { appConfigStore, protoFilesStore, servicesStore } from "../../stores";
 import faker from 'faker';
-import { TabConfigModel, tabListConfigStore } from "../../stores/tabStore";
-import { get } from "svelte/store";
+import type { TabConfigModel } from "../types";
 
-export class ProtoUtil {
-    static async getMethodRpc(serviceName: string, methodName: string): Promise<RpcProtoInfo> {
-        const services = await servicesStore.getValue()
-        return new Promise<RpcProtoInfo>((res, rej) => {
-            const filteredServices = services.filter((service, index) => service.serviceName === serviceName)
-            if (filteredServices.length == 0) {
-                rej('could not find the service ' + serviceName)
-                return
-            }
-            const selectedService = filteredServices[0]
-            if (selectedService.methods[methodName]) {
-                res(selectedService.methods[methodName])
-            } else {
-                rej('could not find any method with method name : ' + methodName)
-            }
-        })
-    }
-    static async loadProtoFilesAndStartServer(filePaths: string[], importPaths: string[]) {
-        const protoFiles = get(protoFilesStore).map(pf => pf.proto.filePath)
-        filePaths = filePaths.filter((fp) => protoFiles.indexOf(fp)<0)
-        if (filePaths.length == 0) return
-        const uniqueProtoFilePaths = [...new Set([...filePaths, ...protoFiles])];
-        const loadedProtoFiles = await loadProtos(uniqueProtoFilePaths, importPaths);
-        protoFilesStore.addProtoFiles(loadedProtoFiles);
-    }
-
+export class StringUtil {
     static stringify(message: any, indentSpace = 2): string {
         return JSON.stringify(message, null, indentSpace)
     }
 }
 
 export class TabUtil {
-    static async getTabConfigFromRpc(rpcProtoInfo: RpcProtoInfo): Promise<TabConfigModel | undefined> {
-        const appConfig = get(tabListConfigStore)
-        return appConfig.tabs.find((tabModel, index, allTabs) => {
-            const rpc = tabModel.selectedRpc
-            return rpc?.serviceName == rpcProtoInfo.serviceName && rpc.methodName == rpcProtoInfo.methodName
-        })
+    static async getTabConfigFromRpc(rpcProtoInfo: any): Promise<TabConfigModel | undefined> {
+        return
     }
 }
 

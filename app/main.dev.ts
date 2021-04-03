@@ -1,7 +1,7 @@
 import { BrowserWindow } from "electron";
 import type { IpcMainChannelInterface } from "./commons/ipc/ipcChannelInterface";
 import { NetworkUtil } from "./commons/utils";
-import { SetProtoFilesChannel, SetProtoImportPathsChannel } from "./main_process/ipc/ipcMainChannels";
+import { StartServerChannel} from "./main_process/ipc/ipcMainChannels";
 
 /**
  * This module executes inside of electron's main process. You can start
@@ -73,7 +73,7 @@ class Main {
       height: 800,
       backgroundColor: "#f0f2f5",
       //@ts-ignore : webpack defined constant
-      title: `${__APP_DISPLAY_NAME__} @ ${NetworkUtil.getLocalIp()}:50051`,
+      title: `${__APP_DISPLAY_NAME__} @ ${NetworkUtil.getLocalIp()}:50052`,
       webPreferences: {
         nodeIntegration: true,
         enableRemoteModule: true
@@ -106,4 +106,4 @@ class Main {
 }
 
 
-new Main().init([new SetProtoImportPathsChannel(), new SetProtoFilesChannel()])
+new Main().init([new StartServerChannel()])

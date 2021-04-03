@@ -1,8 +1,7 @@
 import type { IpcMainEvent , IpcRendererEvent } from "electron";
 
 export enum IpcChannel {
-    startServer = 'setProtoFiles',
-    setProtoImportPaths = 'setProtoImportPaths',
+    startServer = 'startServer',
     onRequest= 'onRequest'
 }
 

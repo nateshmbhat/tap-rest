@@ -1,58 +1,26 @@
 import { derived, get, writable } from "svelte/store";
-import type { RpcProtoInfo } from "../renderer/behaviour";
-import { RpcOperationMode } from "./appConfigStore";
 import { EditorEventEmitter } from "../renderer/behaviour/responseStateController";
-
-export interface TabConfigModel {
-    id: string;
-    selectedRpc: RpcProtoInfo | undefined;
-    targetGrpcServerUrl: string;
-    rpcOperationMode: RpcOperationMode;
-    monitorRequestEditorState: MonitorRequestEditorModel;
-    monitorResponseEditorState: MonitorResponseEditorModel;
-    clientRequestEditorState: ClientEditorModel;
-    clientResponseEditorState: ClientEditorModel;
-    mockRpcEditorText: string;
-}
-
-export interface ClientEditorModel {
-    text: string;
-    metadata: string;
-}
-export interface TabListConfigModel {
-    tabs: TabConfigModel[];
-    activeTabIndex: number;
-}
-
-///Enum only applicable for editor when it "not in client mode"
-export enum EditorDataFlowMode {
-    passThrough, liveEdit
-}
-
-export interface MonitorRequestEditorModel {
-    text: string;
-    metadata: string;
-    eventEmitter: EditorEventEmitter;
-    dataFlowMode: EditorDataFlowMode;
-}
-
-export interface MonitorResponseEditorModel {
-    text: string;
-    eventEmitter: EditorEventEmitter;
-    dataFlowMode: EditorDataFlowMode;
-}
+import type { ClientEditorModel, MonitorRequestEditorModel, MonitorResponseEditorModel, TabConfigModel, TabListConfigModel, } from "../commons";
+import { OperationMode, EditorDataFlowMode } from "../commons/types";
 
 function getDefaultTabConfig(): TabConfigModel {
     return ({
         id: '0',
-        selectedRpc: undefined,
-        targetGrpcServerUrl: 'localhost:9090',
-        rpcOperationMode: RpcOperationMode.mockRpc,
-        monitorRequestEditorState: { text: '', eventEmitter: new EditorEventEmitter(), metadata: '{}', dataFlowMode: EditorDataFlowMode.passThrough },
+        targetHttpServerUrl: 'http://localhost:9090',
+        operationMode: OperationMode.monitor,
+        monitorRequestEditorState: {
+            text: '',
+            // incomingRequest: {
+            //     body: '{}', headers: {}, hostname: '', method: 'GET', path: '', query: {},
+            //     url: '', trailers: {}
+            // },
+            eventEmitter: new EditorEventEmitter(),
+            dataFlowMode: EditorDataFlowMode.passThrough,
+        },
         clientRequestEditorState: { text: '{}', metadata: '{}' },
         monitorResponseEditorState: { text: '', eventEmitter: new EditorEventEmitter(), dataFlowMode: EditorDataFlowMode.passThrough },
         clientResponseEditorState: { text: '', metadata: '{}' },
-        mockRpcEditorText: '{}'
+        mockRpcEditorText: 'Coming Soon...'
     });
 }
 
@@ -66,31 +34,25 @@ function createTabListConfigStore() {
         subscribe,
         setActiveTab: (index: number) => update((store) => ({ ...store, activeTabIndex: index })),
         setValue: async (tabConfigListModel: TabListConfigModel) => set(tabConfigListModel),
-        setActiveTabSelectedRpc: (rpcInfo: RpcProtoInfo) => update((config) => {
+        setActiveTabTargetHttpServerUrl: (url: string) => update((config) => {
             const activeTab = config.tabs[config.activeTabIndex]
             const allTabs = Array.from(config.tabs)
-            allTabs[config.activeTabIndex] = { ...activeTab, selectedRpc: rpcInfo }
+            allTabs[config.activeTabIndex] = { ...activeTab, targetHttpServerUrl: url }
             return { ...config, tabs: allTabs }
         }),
-        setActiveTabTargetGrpcServerUrl: (url: string) => update((config) => {
+        setActiveTabOperationMode: (mode: OperationMode) => update(config => {
             const activeTab = config.tabs[config.activeTabIndex]
             const allTabs = Array.from(config.tabs)
-            allTabs[config.activeTabIndex] = { ...activeTab, targetGrpcServerUrl: url }
+            allTabs[config.activeTabIndex] = { ...activeTab, operationMode: mode }
             return { ...config, tabs: allTabs }
         }),
-        setActiveTabRpcOperationMode: (mode: RpcOperationMode) => update(config => {
-            const activeTab = config.tabs[config.activeTabIndex]
-            const allTabs = Array.from(config.tabs)
-            allTabs[config.activeTabIndex] = { ...activeTab, rpcOperationMode: mode }
-            return { ...config, tabs: allTabs }
-        }),
-        setActiveTabRequestEditorState: (requestEditorModel: MonitorRequestEditorModel) => update((config) => {
+        setActiveTabMonitorRequestEditorState: (requestEditorModel: MonitorRequestEditorModel) => update((config) => {
             const activeTab = config.tabs[config.activeTabIndex]
             const allTabs = Array.from(config.tabs)
             allTabs[config.activeTabIndex] = { ...activeTab, monitorRequestEditorState: requestEditorModel }
             return { ...config, tabs: allTabs }
         }),
-        setActiveTabResponseEditorState: (responseEditorModel: MonitorResponseEditorModel) => update((config) => {
+        setActiveTabMonitorResponseEditorState: (responseEditorModel: MonitorResponseEditorModel) => update((config) => {
             const activeTab = config.tabs[config.activeTabIndex]
             const allTabs = Array.from(config.tabs)
             allTabs[config.activeTabIndex] = { ...activeTab, monitorResponseEditorState: responseEditorModel }
@@ -140,16 +102,12 @@ function createActiveTabConfigStore() {
 
     return {
         subscribe,
-        setSelectedRpc: (rpcInfo: RpcProtoInfo) => {
-            console.log("Seleted RPC : ", rpcInfo.methodName)
-            return tabListConfigStore.setActiveTabSelectedRpc(rpcInfo);
+        setTargetHttpServerUrl: (url: string) => tabListConfigStore.setActiveTabTargetHttpServerUrl(url),
+        setOperationMode: async (mode: OperationMode) => {
+            tabListConfigStore.setActiveTabOperationMode(mode);
         },
-        setTargetGrpcServerUrl: (url: string) => tabListConfigStore.setActiveTabTargetGrpcServerUrl(url),
-        setRpcOperationMode: async (mode: RpcOperationMode) => {
-            tabListConfigStore.setActiveTabRpcOperationMode(mode);
-        },
-        setRequestEditorState: (editorModel: MonitorRequestEditorModel) => tabListConfigStore.setActiveTabRequestEditorState(editorModel),
-        setResponseEditorState: (editorModel: MonitorResponseEditorModel) => tabListConfigStore.setActiveTabResponseEditorState(editorModel),
+        setMonitorRequestEditorState: (editorModel: MonitorRequestEditorModel) => tabListConfigStore.setActiveTabMonitorRequestEditorState(editorModel),
+        setMonitorResponseEditorState: (editorModel: MonitorResponseEditorModel) => tabListConfigStore.setActiveTabMonitorResponseEditorState(editorModel),
         setClientRequestEditorState: (editorModel: ClientEditorModel) => tabListConfigStore.setActiveTabClientRequestEditorState(editorModel),
         setClientResponseEditorState: (editorModel: ClientEditorModel) => tabListConfigStore.setActiveTabClientResponseEditorState(editorModel),
         setMockRpcEditorText: (text: string) => tabListConfigStore.setActiveTabMockRpcEditorText(text),

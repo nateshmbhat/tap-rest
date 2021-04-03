@@ -1,11 +1,11 @@
 <script lang="ts">
   import { Button, List, ListItem, Menu } from 'svelte-materialify/src'
-  import { RpcOperationMode, activeTabConfigStore } from '../../../stores'
-  const modes = Object.values(RpcOperationMode)
-  $: currentMode = $activeTabConfigStore.rpcOperationMode
+  import { OperationMode, activeTabConfigStore } from '../../../stores'
+  const modes = Object.values(OperationMode)
+  $: currentMode = $activeTabConfigStore.OperationMode
 
-  const changeMode = (mode: RpcOperationMode) => {
-    activeTabConfigStore.setRpcOperationMode(mode)
+  const changeMode = (mode: OperationMode) => {
+    activeTabConfigStore.setOperationMode(mode)
   }
 </script>
 
