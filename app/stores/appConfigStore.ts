@@ -9,7 +9,8 @@ function createAppConfigStore() {
     proxyHttpServerPort: 50052,
     proxyHttpServer: null,
     testHttpServer: null,
-    testHttpServerUrl: '0.0.0.0:9090',
+    testHttpServerHost: '0.0.0.0',
+    testHttpServerPort: 9090,
   });
 
   return {

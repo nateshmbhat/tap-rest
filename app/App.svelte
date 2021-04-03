@@ -9,6 +9,7 @@
   });
   onDestroy(() => {
     $appConfigStore.proxyHttpServer?.close();
+    $appConfigStore.testHttpServer?.close();
   });
 </script>
 

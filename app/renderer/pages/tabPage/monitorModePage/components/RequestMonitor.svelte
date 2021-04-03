@@ -3,7 +3,7 @@
   import {
     activeTabConfigStore,
   } from "../../../../../stores";
-  import { Row, Col, Divider, ExpansionPanels } from "svelte-materialify/src";
+  import { Col, ExpansionPanels } from "svelte-materialify/src";
   import LiveEditCheckBox from "./LiveEditCheckBox.svelte";
   import ConnectionComponentEditor from "./ConnectionComponentEditor.svelte";
   import { StringUtil } from "../../../../../commons/utils/util";

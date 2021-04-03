@@ -6,7 +6,7 @@ import { OperationMode, EditorDataFlowMode } from "../commons/types";
 function getDefaultTabConfig(): TabConfigModel {
     return ({
         id: '0',
-        targetHttpServerUrl: 'localhost:9090',
+        targetHttpServerUrl: 'http://localhost:9090',
         operationMode: OperationMode.monitor,
         monitorRequestEditorState: {
             text: '',

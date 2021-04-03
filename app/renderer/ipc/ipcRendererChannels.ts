@@ -39,11 +39,9 @@ export class RequestHandlerChannel implements IpcRendererChannelInterface {
 
     private async handleRequestInMonitorMode(request: IpcRequest, event: IpcRendererEvent) {
         const req: IncomingRequest = request.params
-        requestInterceptor({
-            requestMessage: req,
-        })
+        requestInterceptor(req)
             .then(responseInfo =>
-                responseInterceptor({ responseMessage: responseInfo })
+                responseInterceptor(responseInfo)
             ).then(transformedResponse => {
                 event.sender.send(request.responseChannel!, transformedResponse);
             });

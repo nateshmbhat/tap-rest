@@ -1,3 +1,4 @@
+import type { Method } from 'axios';
 import type http from 'http'
 import type { EditorEventEmitter } from '../../renderer/behaviour/responseStateController';
 export interface TransformedResponse {
@@ -9,7 +10,8 @@ export interface AppConfigModel {
     proxyHttpServer: http.Server | null;
     proxyHttpServerPort: number,
     testHttpServer: http.Server | null;
-    testHttpServerUrl: string;
+    testHttpServerHost: string;
+    testHttpServerPort: number,
 }
 
 export enum OperationMode {
@@ -32,7 +34,14 @@ export interface IncomingRequest {
     headers: http.IncomingHttpHeaders;
     trailers: { [key: string]: string | undefined };
     hostname: string;
-    method: string;
+    method: Method;
+}
+
+export interface IncomingResponse {
+  data: any;
+  status: number;
+  statusText: string;
+  headers: any;
 }
 
 export interface TabConfigModel {
