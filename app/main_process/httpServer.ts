@@ -1,11 +1,9 @@
 import { get } from "svelte/store"
 import { appConfigStore } from "../stores"
 import http from 'http'
-import httpProxy from 'http-proxy'
 import type { Method } from 'axios'
 import express from 'express'
 import { RendererProcessInterface } from "./ipc/ipcRendererProcessInterface"
-import { StringUtil } from "../commons/utils/util"
 
 
 export const startHttpProxyServer = async (): Promise<void> => {
@@ -25,7 +23,11 @@ export const startHttpProxyServer = async (): Promise<void> => {
         RendererProcessInterface.onRequest({ body, url, method: method as Method, headers, trailers, hostname, path, query }).then(
             transformedResponse => {
                 console.log('transformed message : ', transformedResponse)
-                res.send(transformedResponse.message)
+                for (let [key, value] of Object.entries(transformedResponse.headers)) {
+                    res.setHeader(key, value as number | string | ReadonlyArray<string>)
+                }
+                res.status(transformedResponse.status)
+                res.send(transformedResponse.data)
             }
         )
             .catch(e => {

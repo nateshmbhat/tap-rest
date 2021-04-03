@@ -5,8 +5,8 @@
   require("brace/theme/chrome");
   export let width = "100%";
   export let height = "100%";
-  const lang = "json",
-    theme = "chrome";
+  export let lang = "json";
+  const theme = "chrome";
 
   export let text = "";
 

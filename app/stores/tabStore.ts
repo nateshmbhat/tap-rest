@@ -9,7 +9,6 @@ function getDefaultTabConfig(): TabConfigModel {
         targetHttpServerUrl: 'http://localhost:9090',
         operationMode: OperationMode.monitor,
         monitorRequestEditorState: {
-            text: '',
             // incomingRequest: {
             //     body: '{}', headers: {}, hostname: '', method: 'GET', path: '', query: {},
             //     url: '', trailers: {}
@@ -18,7 +17,12 @@ function getDefaultTabConfig(): TabConfigModel {
             dataFlowMode: EditorDataFlowMode.passThrough,
         },
         clientRequestEditorState: { text: '{}', metadata: '{}' },
-        monitorResponseEditorState: { text: '', eventEmitter: new EditorEventEmitter(), dataFlowMode: EditorDataFlowMode.passThrough },
+        monitorResponseEditorState: {
+            // incomingResponse: {
+            //     data: '{}', headers: {}, status: 200
+            // },
+            eventEmitter: new EditorEventEmitter(), dataFlowMode: EditorDataFlowMode.passThrough
+        },
         clientResponseEditorState: { text: '', metadata: '{}' },
         mockRpcEditorText: 'Coming Soon...'
     });

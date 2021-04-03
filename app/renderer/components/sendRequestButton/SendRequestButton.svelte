@@ -15,7 +15,7 @@
     if (requestInProgress) return;
     requestInProgress = true;
     const requestModel = $activeTabConfigStore.clientRequestEditorState;
-    ClientManager.sendRequest();
+    // ClientManager.sendRequest();
   }
 </script>
 

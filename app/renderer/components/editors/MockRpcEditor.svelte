@@ -13,7 +13,7 @@
     const newResponse = FakerUtil.generateFakeJsonObject(
       JSON.parse(editorText)
     );
-    activeTabConfigStore.setMockRpcEditorText(ProtoUtil.stringify(newResponse));
+    activeTabConfigStore.setMockRpcEditorText(ProtoUtil.jsonStringify(newResponse));
   };
 </script>
 

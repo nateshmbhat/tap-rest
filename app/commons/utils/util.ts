@@ -4,7 +4,7 @@ import faker from 'faker';
 import type { TabConfigModel } from "../types";
 
 export class StringUtil {
-    static stringify(message: any, indentSpace = 2): string {
+    static jsonStringify(message: any, indentSpace = 2): string {
         return JSON.stringify(message, null, indentSpace)
     }
 }
