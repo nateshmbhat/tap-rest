@@ -1,8 +1,12 @@
 <script lang="ts">
-  import { TextField } from "svelte-materialify/src";
+  import { createEventDispatcher } from "svelte";
 
+  import { Divider } from "svelte-materialify/src";
   import { activeTabConfigStore, appConfigStore } from "../../../stores";
-  $: targetServer = $activeTabConfigStore.targetHttpServerUrl;
+  $: targetServer = $activeTabConfigStore.targetHttpServerBaseUrl;
+  export let urlPath: string;
+
+  const dispatch = createEventDispatcher<{ changeUrlPath: string }>();
 </script>
 
 <div class="row border rounded fullwidth">
@@ -10,27 +14,22 @@
     >Target Server
   </span>
 
-  <!-- <TextField dense solo color='color-primary'   /> -->
-
   <input
-    id="host-input"
-    class="fullwidth"
+    style="text-indent: 5px;"
     on:input={e =>
       activeTabConfigStore.setTargetHttpServerUrl(e.currentTarget.value)}
     value={targetServer}
-    placeholder="api.example.com/users/"
+    placeholder="https://api.example.com"
   />
-
-  <!-- <input
-    id="path-input"
-    class="fullwidth"
-    value={"/hello/itsme/"}
-    placeholder="/users/1"
-  /> -->
+  <Divider vertical />
+  {#if urlPath}
+    <input
+      id="path-input"
+      style="text-indent: 5px;"
+      class="fullwidth"
+      value={urlPath}
+      on:input={e => dispatch("changeUrlPath", e.currentTarget.value)}
+      placeholder="/users/profile/83828"
+    />
+  {/if}
 </div>
-
-<style>
-  #host-input {
-    text-indent: 5px;
-  }
-</style>

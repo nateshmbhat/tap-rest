@@ -42,7 +42,7 @@ export interface IncomingResponse {
 
 export interface TabConfigModel {
     id: string;
-    targetHttpServerUrl: string;
+    targetHttpServerBaseUrl: string;
     operationMode: OperationMode;
     monitorRequestEditorState: MonitorRequestEditorModel;
     monitorResponseEditorState: MonitorResponseEditorModel;

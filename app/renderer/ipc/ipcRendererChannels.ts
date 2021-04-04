@@ -4,6 +4,7 @@ import { IpcChannel, IpcRendererChannelInterface, IpcRequest } from "../../commo
 import { activeTabConfigStore } from "../../stores";
 import { get } from "svelte/store";
 import { IncomingRequest, OperationMode } from "../../commons/types";
+import { StringUtil } from "../../commons/utils/util";
 
 export class RequestHandlerChannel implements IpcRendererChannelInterface {
     getName(): string {

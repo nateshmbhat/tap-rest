@@ -6,7 +6,7 @@ import { OperationMode, EditorDataFlowMode } from "../commons/types";
 function getDefaultTabConfig(): TabConfigModel {
     return ({
         id: '0',
-        targetHttpServerUrl: 'http://localhost:9090',
+        targetHttpServerBaseUrl: 'http://localhost:9090',
         operationMode: OperationMode.monitor,
         monitorRequestEditorState: {
             // incomingRequest: {
@@ -41,7 +41,7 @@ function createTabListConfigStore() {
         setActiveTabTargetHttpServerUrl: (url: string) => update((config) => {
             const activeTab = config.tabs[config.activeTabIndex]
             const allTabs = Array.from(config.tabs)
-            allTabs[config.activeTabIndex] = { ...activeTab, targetHttpServerUrl: url }
+            allTabs[config.activeTabIndex] = { ...activeTab, targetHttpServerBaseUrl: url }
             return { ...config, tabs: allTabs }
         }),
         setActiveTabOperationMode: (mode: OperationMode) => update(config => {
