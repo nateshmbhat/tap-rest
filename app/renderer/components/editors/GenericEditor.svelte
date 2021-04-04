@@ -2,11 +2,12 @@
   import { createEventDispatcher } from "svelte";
   import { AceEditor } from "svelte-ace";
   require("brace/mode/json");
+  require("brace/mode/plain_text");
   require("brace/theme/chrome");
   export let width = "100%";
   export let height = "100%";
-  export let lang = "json";
-  const theme = "chrome";
+  export let lang = "json"
+    const theme = "chrome";
 
   export let text = "";
 

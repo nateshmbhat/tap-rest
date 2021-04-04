@@ -1,21 +1,34 @@
 import type { AxiosResponse } from 'axios';
 import { get } from 'svelte/store';
 import { EditorDataFlowMode, IncomingResponse } from '../../commons/types';
-import { ProtoUtil } from '../../commons/utils';
+import { HttpHeaderUtil, StringUtil } from '../../commons/utils/util';
 import { activeTabConfigStore } from '../../stores';
 import { EditorEventType } from './responseStateController';
+import type http from 'http'
+
+
+function handleResponseHeaders(headers: http.IncomingHttpHeaders): http.IncomingHttpHeaders {
+    const modifiableHeaders = HttpHeaderUtil.removeHopByHopHeaders(headers)
+    delete modifiableHeaders['content-encoding']
+    return modifiableHeaders
+}
 
 
 export async function responseInterceptor(response: AxiosResponse): Promise<IncomingResponse> {
-    console.log("Incoming response : " , response)
+    console.log("Incoming response : ", response)
     const activeTabConfig = get(activeTabConfigStore)
-    const { data, headers, status} = response
+    const { data, headers, status } = response
+    const modifiableHeaders = handleResponseHeaders(headers)
+
+    let stringifiedData: string;
+    if (typeof data === 'string') stringifiedData = data;
+    else stringifiedData = StringUtil.jsonStringify(data)
+
     activeTabConfigStore.setMonitorResponseEditorState({
-        ...activeTabConfig.monitorResponseEditorState, incomingResponse: {
-            data: response.data, headers: response.headers, status: response.status
-        }
+        ...activeTabConfig.monitorResponseEditorState, incomingResponse: { data: stringifiedData, headers: modifiableHeaders, status }
     })
-    const transformedResponse = await transformResponse({ data, headers, status})
+
+    const transformedResponse = await transformResponse({ data, headers: modifiableHeaders, status })
     return transformedResponse
 }
 

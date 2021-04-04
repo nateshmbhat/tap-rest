@@ -1,10 +1,13 @@
 <script lang="ts">
   import { activeTabConfigStore } from "../../../../../stores";
-  import { Row, Col, Divider, ExpansionPanels } from "svelte-materialify/src";
+  import { Col, ExpansionPanels } from "svelte-materialify/src";
   import LiveEditCheckBox from "./LiveEditCheckBox.svelte";
   import { EditorDataFlowMode, IncomingResponse } from "../../../../../commons";
   import ConnectionComponentEditor from "./ConnectionComponentEditor.svelte";
-  import { StringUtil } from "../../../../../commons/utils/util";
+  import { HttpHeaderUtil, StringUtil } from "../../../../../commons/utils/util";
+
+  let incomingResponse: IncomingResponse | undefined;
+  let isJsonData = false;
 
   const changeResponseMode = async (enableDataEdit: boolean) => {
     activeTabConfigStore.setMonitorResponseEditorState({
@@ -24,8 +27,13 @@
     EditorDataFlowMode.liveEdit;
 
   $: responseState = $activeTabConfigStore.monitorResponseEditorState;
-  let incomingResponse: IncomingResponse | undefined;
-  $: incomingResponse = responseState.incomingResponse;
+
+  $: {
+    incomingResponse = responseState.incomingResponse;
+    if (incomingResponse !== undefined) {
+      isJsonData = HttpHeaderUtil.isContentJson(incomingResponse.headers)
+    }
+  }
 
   function changeMonitorResponseState(updateObject: any) {
     activeTabConfigStore.setMonitorResponseEditorState({
@@ -70,7 +78,7 @@
         visible={incomingResponse !== undefined}
         width="100%"
         height={"500"}
-        isJson={false}
+        isJson={isJsonData}
         title="Response Data"
         text={incomingResponse.data}
         on:textChange={e => changeData(e.detail)}

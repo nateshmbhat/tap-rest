@@ -14,7 +14,7 @@
   <ExpansionPanel>
     <span slot="header">{title}</span>
     <GenericEditor
-      lang={isJson ? "json" : ""}
+      lang={isJson ? "json" : "plain_text"}
       {width}
       {height}
       {text}

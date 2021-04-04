@@ -2,9 +2,11 @@ import { remote } from "electron";
 import type { OpenDialogReturnValue } from "electron/main";
 import faker from 'faker';
 import type { TabConfigModel } from "../types";
+import type http from 'http'
 
 export class StringUtil {
     static jsonStringify(message: any, indentSpace = 2): string {
+        if (typeof message === 'string') return message
         return JSON.stringify(message, null, indentSpace)
     }
 }
@@ -38,6 +40,75 @@ export class FileSystemUtil {
     }
 }
 
+export class HttpHeaderUtil {
+    static isContentJson(headers: http.IncomingHttpHeaders): boolean {
+        const contentType = headers["content-type"];
+        if (
+            contentType !== undefined &&
+            (contentType.indexOf("application/json") >= 0 || contentType.indexOf("application/vnd.api+json") >= 0)
+        ) {
+            return true
+        }
+        return false
+    }
+    static filterSafeHeaders(headers: http.IncomingHttpHeaders) {
+        const unsafeHeaders = new Set([
+            'accept-charset',
+            'accept-encoding',
+            'access-control-request-headers',
+            'access-control-request-method',
+            'connection',
+            'content-length',
+            'cookie',
+            'cookie2',
+            'date',
+            'dNT',
+            'expect',
+            'feature-policy',
+            'host',
+            'origin',
+            'keep-alive',
+            'proxy-',
+            'sec-',
+            'referer',
+            'tE',
+            'trailer',
+            'transfer-encoding',
+            'upgrade',
+            'via',
+            'user-agent',
+        ])
+        const safeHeaders: { [header: string]: string | string[] | undefined } = {}
+        for (let header in headers) {
+            const lowerCasedHeader = header.toLowerCase()
+            if (lowerCasedHeader.startsWith('proxy-') || lowerCasedHeader.startsWith('sec-') || unsafeHeaders.has(lowerCasedHeader)) {
+                continue
+            }
+            safeHeaders[header] = headers[header]
+        }
+        return safeHeaders
+    }
+    static removeHopByHopHeaders(headers: http.IncomingHttpHeaders): http.IncomingHttpHeaders {
+        const nonHopHeaders: http.IncomingHttpHeaders = {}
+        const hopByHopHeaders = new Set([
+            'keep-alive', 'transfer-encoding', 'te', 'connection', 'trailer', 'upgrade', 'proxy-authorization', 'proxy-authenticate'
+        ])
+        for (let [key, value] of Object.entries(headers)) {
+            if (key.toLowerCase().trim() === 'connection') {
+                const connectionValues = (value as string).split(',')
+                connectionValues.map(e => e.toLowerCase().trim()).forEach(cv=>hopByHopHeaders.add(cv))
+            }
+        }
+
+        for (let [key, value] of Object.entries(headers)) {
+            if (!hopByHopHeaders.has(key.toLowerCase().trim())) {
+                nonHopHeaders[key] = value
+            }
+        }
+
+        return nonHopHeaders
+    }
+}
 
 export class FakerUtil {
     static generateFakeJsonObject(object: { [key: string]: any }): Object {

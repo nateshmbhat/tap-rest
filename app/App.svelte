@@ -49,4 +49,10 @@
   .border {
     border: 1px solid black;
   }
+  .fullwidth {
+    width: 100%;
+  }
+  .fullheight {
+    height: 100%;
+  }
 </style>

@@ -4,6 +4,7 @@ import http from 'http'
 import type { Method } from 'axios'
 import express from 'express'
 import { RendererProcessInterface } from "./ipc/ipcRendererProcessInterface"
+import { HttpHeaderUtil } from "../commons/utils/util"
 
 
 export const startHttpProxyServer = async (): Promise<void> => {
@@ -20,9 +21,9 @@ export const startHttpProxyServer = async (): Promise<void> => {
         console.log('path and params : ', req.path, req.params)
         console.log('body : ', req.body)
         const { body, url, method, headers, trailers, hostname, query, path } = req
-        RendererProcessInterface.onRequest({ body, url, method: method as Method, headers, trailers, hostname, path, query }).then(
+        RendererProcessInterface.onRequest({ body, url, method: method as Method, headers: HttpHeaderUtil.removeHopByHopHeaders(req.headers), trailers, hostname, path, query }).then(
             transformedResponse => {
-                console.log('transformed message : ', transformedResponse)
+                console.log('transformed response : ', transformedResponse)
                 for (let [key, value] of Object.entries(transformedResponse.headers)) {
                     res.setHeader(key, value as number | string | ReadonlyArray<string>)
                 }
