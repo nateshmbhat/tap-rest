@@ -1,9 +1,6 @@
 import type { Method } from 'axios';
 import type http from 'http'
 import type { EditorEventEmitter } from '../../renderer/behaviour/responseStateController';
-export interface TransformedResponse {
-    message: string
-}
 
 export interface AppConfigModel {
     proxyHttpServerHost: string;
@@ -38,15 +35,15 @@ export interface IncomingRequest {
 }
 
 export interface IncomingResponse {
-  data: any;
-  status: number;
-  statusText: string;
-  headers: any;
+    data: string;
+    status: number;
+    headers: http.IncomingHttpHeaders;
+    error?: Error
 }
 
 export interface TabConfigModel {
     id: string;
-    targetHttpServerUrl: string;
+    targetHttpServerBaseUrl: string;
     operationMode: OperationMode;
     monitorRequestEditorState: MonitorRequestEditorModel;
     monitorResponseEditorState: MonitorResponseEditorModel;
@@ -70,14 +67,13 @@ export enum EditorDataFlowMode {
 }
 
 export interface MonitorRequestEditorModel {
-    text: string;
     incomingRequest?: IncomingRequest;
     eventEmitter: EditorEventEmitter;
     dataFlowMode: EditorDataFlowMode;
 }
 
 export interface MonitorResponseEditorModel {
-    text: string;
+    incomingResponse?: IncomingResponse;
     eventEmitter: EditorEventEmitter;
     dataFlowMode: EditorDataFlowMode;
 }

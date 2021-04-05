@@ -1,53 +1,63 @@
 <script>
-	import { EditorDataFlowMode } from './../../../../../commons/types';
-  import {
-    activeTabConfigStore,
-  } from "../../../../../stores";
-  import { Col, ExpansionPanels } from "svelte-materialify/src";
-  import LiveEditCheckBox from "./LiveEditCheckBox.svelte";
-  import ConnectionComponentEditor from "./ConnectionComponentEditor.svelte";
-  import { StringUtil } from "../../../../../commons/utils/util";
-  import type { IncomingRequest } from "../../../../../commons";
+  import { EditorDataFlowMode } from './../../../../../commons/types'
+  import { activeTabConfigStore } from '../../../../../stores'
+  import { Col, ExpansionPanels } from 'svelte-materialify/src'
+  import LiveEditCheckBox from './LiveEditCheckBox.svelte'
+  import ConnectionComponentEditor from './ConnectionComponentEditor.svelte'
+  import { StringUtil } from '../../../../../commons/utils/util'
+  import type { IncomingRequest } from '../../../../../commons'
 
   const changeRequestMode = async (enableDataEdit: boolean) => {
     activeTabConfigStore.setMonitorRequestEditorState({
       ...$activeTabConfigStore.monitorRequestEditorState,
       dataFlowMode: enableDataEdit
         ? EditorDataFlowMode.liveEdit
-        : EditorDataFlowMode.passThrough
-    });
-  };
+        : EditorDataFlowMode.passThrough,
+    })
+  }
 
   const requestEditDone = async () => {
-    $activeTabConfigStore.monitorRequestEditorState.eventEmitter.emitEditingDone();
-  };
+    $activeTabConfigStore.monitorRequestEditorState.eventEmitter.emitEditingDone()
+  }
 
   $: requestLiveEditEnabled =
     $activeTabConfigStore.monitorRequestEditorState.dataFlowMode ==
-    EditorDataFlowMode.liveEdit;
+    EditorDataFlowMode.liveEdit
 
-  $: requestState = $activeTabConfigStore.monitorRequestEditorState;
-  let incomingRequest : IncomingRequest|undefined
-  $: incomingRequest = requestState.incomingRequest;
+  $: requestState = $activeTabConfigStore.monitorRequestEditorState
+  let incomingRequest: IncomingRequest | undefined
+  $: incomingRequest = requestState.incomingRequest
 
-  function changeMonitorRequestState(updateObject : any){
+  function changeMonitorRequestState(updateObject: any) {
     activeTabConfigStore.setMonitorRequestEditorState({
       ...requestState,
-      incomingRequest:{
+      incomingRequest: {
         ...incomingRequest!,
-        ...updateObject
-      } 
-    });
+        ...updateObject,
+      },
+    })
   }
 
   function changeBody(text: string) {
-    changeMonitorRequestState({body : JSON.parse(text)}) 
+    try {
+      changeMonitorRequestState({ body: JSON.parse(text) })
+    } catch (e) {
+      console.warn(e)
+    }
   }
   function changeHeaders(text: string) {
-    changeMonitorRequestState({headers : JSON.parse(text) }) 
+    try {
+      changeMonitorRequestState({ headers: JSON.parse(text) })
+    } catch (e) {
+      console.warn(e)
+    }
   }
   function changeQueryParams(text: string) {
-    changeMonitorRequestState({query: JSON.parse(text) }) 
+    try {
+      changeMonitorRequestState({ query: JSON.parse(text) })
+    } catch (e) {
+      console.warn(e)
+    }
   }
 </script>
 
@@ -65,7 +75,7 @@
         width="100%"
         height={"400"}
         title="Body"
-        text={StringUtil.stringify(incomingRequest.body)}
+        text={StringUtil.jsonStringify(incomingRequest.body)}
         on:textChange={e => changeBody(e.detail)}
       />
 
@@ -74,7 +84,7 @@
         width="100%"
         height={"350"}
         title="Headers"
-        text={StringUtil.stringify(incomingRequest.headers)}
+        text={StringUtil.jsonStringify(incomingRequest.headers)}
         on:textChange={e => changeHeaders(e.detail)}
       />
 
@@ -83,7 +93,7 @@
         width="100%"
         height={"150"}
         title="Query Params"
-        text={StringUtil.stringify(incomingRequest.query)}
+        text={StringUtil.jsonStringify(incomingRequest.query)}
         on:textChange={e => changeQueryParams(e.detail)}
       />
     </ExpansionPanels>

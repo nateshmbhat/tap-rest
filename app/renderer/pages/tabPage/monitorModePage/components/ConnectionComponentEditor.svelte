@@ -7,11 +7,18 @@
   export let height: string = "450";
   export let width: string = "100%";
   export let visible: boolean = true;
+  export let isJson: boolean = true;
 </script>
 
 {#if visible}
   <ExpansionPanel>
     <span slot="header">{title}</span>
-    <GenericEditor {width} {height} {text} on:textChange />
+    <GenericEditor
+      lang={isJson ? "json" : "plain_text"}
+      {width}
+      {height}
+      {text}
+      on:textChange
+    />
   </ExpansionPanel>
 {/if}

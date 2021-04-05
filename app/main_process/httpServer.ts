@@ -1,11 +1,10 @@
 import { get } from "svelte/store"
 import { appConfigStore } from "../stores"
 import http from 'http'
-import httpProxy from 'http-proxy'
 import type { Method } from 'axios'
 import express from 'express'
 import { RendererProcessInterface } from "./ipc/ipcRendererProcessInterface"
-import { StringUtil } from "../commons/utils/util"
+import { HttpHeaderUtil } from "../commons/utils/util"
 
 
 export const startHttpProxyServer = async (): Promise<void> => {
@@ -22,14 +21,29 @@ export const startHttpProxyServer = async (): Promise<void> => {
         console.log('path and params : ', req.path, req.params)
         console.log('body : ', req.body)
         const { body, url, method, headers, trailers, hostname, query, path } = req
-        RendererProcessInterface.onRequest({ body, url, method: method as Method, headers, trailers, hostname, path, query }).then(
+        RendererProcessInterface.onRequest({ body, url, method: method as Method, headers: HttpHeaderUtil.removeHopByHopHeaders(req.headers), trailers, hostname, path, query }).then(
             transformedResponse => {
-                console.log('transformed message : ', transformedResponse)
-                res.send(transformedResponse.message)
+                console.log('transformed response : ', transformedResponse)
+                const error = transformedResponse.error
+                if (error) {
+                    const resultArray = error.message.match('status code (\\d{3})')
+                    if (resultArray != null && resultArray !== undefined) {
+                        res.status(Number.parseInt(resultArray[1]))
+                        return
+                    }
+                    res.send(error.message)
+                    return
+                }
+                for (let [key, value] of Object.entries(transformedResponse.headers)) {
+                    res.setHeader(key, value as number | string | ReadonlyArray<string>)
+                }
+                res.status(transformedResponse.status)
+                res.send(transformedResponse.data)
             }
         )
             .catch(e => {
                 console.error(e)
+                res.send(e.message)
             })
     })
 

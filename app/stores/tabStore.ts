@@ -6,10 +6,9 @@ import { OperationMode, EditorDataFlowMode } from "../commons/types";
 function getDefaultTabConfig(): TabConfigModel {
     return ({
         id: '0',
-        targetHttpServerUrl: 'http://localhost:9090',
+        targetHttpServerBaseUrl: 'https://fedmobuat.federalbank.co.in:9443',
         operationMode: OperationMode.monitor,
         monitorRequestEditorState: {
-            text: '',
             // incomingRequest: {
             //     body: '{}', headers: {}, hostname: '', method: 'GET', path: '', query: {},
             //     url: '', trailers: {}
@@ -18,7 +17,12 @@ function getDefaultTabConfig(): TabConfigModel {
             dataFlowMode: EditorDataFlowMode.passThrough,
         },
         clientRequestEditorState: { text: '{}', metadata: '{}' },
-        monitorResponseEditorState: { text: '', eventEmitter: new EditorEventEmitter(), dataFlowMode: EditorDataFlowMode.passThrough },
+        monitorResponseEditorState: {
+            // incomingResponse: {
+            //     data: '{}', headers: {}, status: 200
+            // },
+            eventEmitter: new EditorEventEmitter(), dataFlowMode: EditorDataFlowMode.passThrough
+        },
         clientResponseEditorState: { text: '', metadata: '{}' },
         mockRpcEditorText: 'Coming Soon...'
     });
@@ -37,7 +41,7 @@ function createTabListConfigStore() {
         setActiveTabTargetHttpServerUrl: (url: string) => update((config) => {
             const activeTab = config.tabs[config.activeTabIndex]
             const allTabs = Array.from(config.tabs)
-            allTabs[config.activeTabIndex] = { ...activeTab, targetHttpServerUrl: url }
+            allTabs[config.activeTabIndex] = { ...activeTab, targetHttpServerBaseUrl: url }
             return { ...config, tabs: allTabs }
         }),
         setActiveTabOperationMode: (mode: OperationMode) => update(config => {

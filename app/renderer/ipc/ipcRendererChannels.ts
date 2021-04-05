@@ -3,7 +3,8 @@ import { requestInterceptor, responseInterceptor } from "../behaviour";
 import { IpcChannel, IpcRendererChannelInterface, IpcRequest } from "../../commons/ipc/ipcChannelInterface";
 import { activeTabConfigStore } from "../../stores";
 import { get } from "svelte/store";
-import { IncomingRequest, OperationMode } from "../../commons/types";
+import { IncomingRequest, IncomingResponse, OperationMode } from "../../commons/types";
+import { StringUtil } from "../../commons/utils/util";
 
 export class RequestHandlerChannel implements IpcRendererChannelInterface {
     getName(): string {
@@ -44,6 +45,15 @@ export class RequestHandlerChannel implements IpcRendererChannelInterface {
                 responseInterceptor(responseInfo)
             ).then(transformedResponse => {
                 event.sender.send(request.responseChannel!, transformedResponse);
+            })
+            .catch((e: Error) => {
+                const responseObject: IncomingResponse = { data: '', status: 0, headers: {}, error: e }
+                const activeConfig = get(activeTabConfigStore)
+                activeTabConfigStore.setMonitorResponseEditorState({
+                    ...activeConfig.monitorResponseEditorState,
+                    incomingResponse: responseObject
+                })
+                event.sender.send(request.responseChannel!, responseObject)
             });
     }
 

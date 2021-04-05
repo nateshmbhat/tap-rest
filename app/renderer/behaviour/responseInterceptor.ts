@@ -1,30 +1,47 @@
+import type { AxiosResponse } from 'axios';
 import { get } from 'svelte/store';
 import { EditorDataFlowMode, IncomingResponse } from '../../commons/types';
-import { ProtoUtil } from '../../commons/utils';
-import { activeTabConfigStore} from '../../stores';
+import { HttpHeaderUtil, StringUtil } from '../../commons/utils/util';
+import { activeTabConfigStore } from '../../stores';
 import { EditorEventType } from './responseStateController';
+import type http from 'http'
 
 
-export async function responseInterceptor(response:IncomingResponse): Promise<IncomingResponse> {
+function handleResponseHeaders(headers: http.IncomingHttpHeaders): http.IncomingHttpHeaders {
+    const modifiableHeaders = HttpHeaderUtil.removeHopByHopHeaders(headers)
+    delete modifiableHeaders['content-encoding']
+    return modifiableHeaders
+}
+
+
+export async function responseInterceptor(response: AxiosResponse): Promise<IncomingResponse> {
+    console.log("Incoming response : ", response)
     const activeTabConfig = get(activeTabConfigStore)
-    // activeTabConfigStore.setMonitorResponseEditorState({ ...activeTabConfig.monitorResponseEditorState, text: ProtoUtil.stringify(responseMessage) })
-    const transformedResponse = await transformResponse({response})
+    const { data, headers, status } = response
+    const modifiableHeaders = handleResponseHeaders(headers)
+
+    let stringifiedData: string;
+    if (typeof data === 'string') stringifiedData = data;
+    else stringifiedData = StringUtil.jsonStringify(data)
+
+    activeTabConfigStore.setMonitorResponseEditorState({
+        ...activeTabConfig.monitorResponseEditorState, incomingResponse: { data: stringifiedData, headers: modifiableHeaders, status }
+    })
+
+    const transformedResponse = await transformResponse({ data, headers: modifiableHeaders, status })
     return transformedResponse
 }
 
-interface ResponseTransformerInput { response: IncomingResponse }
-
-async function transformResponse(transformerInput: ResponseTransformerInput): Promise<IncomingResponse> {
+async function transformResponse(incomingResponse: IncomingResponse): Promise<IncomingResponse> {
     const transformedResponse = await new Promise<IncomingResponse>(async (resolve, reject) => {
         const activeTab = get(activeTabConfigStore)
         if (activeTab.monitorResponseEditorState.dataFlowMode == EditorDataFlowMode.passThrough) {
-            resolve(transformerInput.response)
+            resolve(incomingResponse)
         }
         else if (activeTab.monitorResponseEditorState.dataFlowMode == EditorDataFlowMode.liveEdit) {
             activeTab.monitorResponseEditorState.eventEmitter.on(EditorEventType.editingDone, async () => {
-                const newResponseString = get(activeTabConfigStore).monitorResponseEditorState.text
-                const newResponseObject = JSON.parse(newResponseString)
-                resolve({ ...transformerInput.response, data: newResponseObject });
+                const newResponseState = get(activeTabConfigStore).monitorResponseEditorState.incomingResponse!
+                resolve(newResponseState);
             })
         }
     });
