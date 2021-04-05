@@ -4,7 +4,10 @@
   import LiveEditCheckBox from "./LiveEditCheckBox.svelte";
   import { EditorDataFlowMode, IncomingResponse } from "../../../../../commons";
   import ConnectionComponentEditor from "./ConnectionComponentEditor.svelte";
-  import { HttpHeaderUtil, StringUtil } from "../../../../../commons/utils/util";
+  import {
+    HttpHeaderUtil,
+    StringUtil
+  } from "../../../../../commons/utils/util";
 
   let incomingResponse: IncomingResponse | undefined;
   let isJsonData = false;
@@ -31,9 +34,10 @@
   $: {
     incomingResponse = responseState.incomingResponse;
     if (incomingResponse !== undefined) {
-      isJsonData = HttpHeaderUtil.isContentJson(incomingResponse.headers)
+      isJsonData = HttpHeaderUtil.isContentJson(incomingResponse.headers);
     }
   }
+  $: errorMessage = incomingResponse?.error?.message;
 
   function changeMonitorResponseState(updateObject: any) {
     activeTabConfigStore.setMonitorResponseEditorState({
@@ -65,25 +69,31 @@
     on:proceed={responseEditDone}
   />
   {#if incomingResponse !== undefined}
-    <ExpansionPanels value={[1]} class="pa-0">
-      <ConnectionComponentEditor
-        visible={incomingResponse.headers !== undefined}
-        width="100%"
-        height={"300"}
-        title="Headers"
-        text={StringUtil.jsonStringify(incomingResponse.headers)}
-        on:textChange={e => changeHeaders(e.detail)}
-      />
-      <ConnectionComponentEditor
-        visible={incomingResponse !== undefined}
-        width="100%"
-        height={"500"}
-        isJson={isJsonData}
-        title="Response Data"
-        text={incomingResponse.data}
-        on:textChange={e => changeData(e.detail)}
-      />
-    </ExpansionPanels>
+    {#if errorMessage}
+      <div class="center red-text" style="display:grid;place-items:center;">
+        <h5>{errorMessage}</h5>
+      </div>
+    {:else}
+      <ExpansionPanels value={[1]} class="pa-0">
+        <ConnectionComponentEditor
+          visible={incomingResponse.headers !== undefined}
+          width="100%"
+          height={"300"}
+          title="Headers"
+          text={StringUtil.jsonStringify(incomingResponse.headers)}
+          on:textChange={e => changeHeaders(e.detail)}
+        />
+        <ConnectionComponentEditor
+          visible={incomingResponse !== undefined}
+          width="100%"
+          height={"500"}
+          isJson={isJsonData}
+          title="Response Data"
+          text={incomingResponse.data}
+          on:textChange={e => changeData(e.detail)}
+        />
+      </ExpansionPanels>
+    {/if}
   {:else}
     <div class="center waiting-for-response">Waiting for Response...</div>
   {/if}

@@ -6,7 +6,7 @@ import { OperationMode, EditorDataFlowMode } from "../commons/types";
 function getDefaultTabConfig(): TabConfigModel {
     return ({
         id: '0',
-        targetHttpServerBaseUrl: 'http://localhost:9090',
+        targetHttpServerBaseUrl: 'https://fedmobuat.federalbank.co.in:9443',
         operationMode: OperationMode.monitor,
         monitorRequestEditorState: {
             // incomingRequest: {

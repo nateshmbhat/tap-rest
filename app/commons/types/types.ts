@@ -37,7 +37,8 @@ export interface IncomingRequest {
 export interface IncomingResponse {
     data: string;
     status: number;
-    headers: http.IncomingHttpHeaders ;
+    headers: http.IncomingHttpHeaders;
+    error?: Error
 }
 
 export interface TabConfigModel {

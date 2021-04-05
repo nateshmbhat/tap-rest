@@ -24,6 +24,16 @@ export const startHttpProxyServer = async (): Promise<void> => {
         RendererProcessInterface.onRequest({ body, url, method: method as Method, headers: HttpHeaderUtil.removeHopByHopHeaders(req.headers), trailers, hostname, path, query }).then(
             transformedResponse => {
                 console.log('transformed response : ', transformedResponse)
+                const error = transformedResponse.error
+                if (error) {
+                    const resultArray = error.message.match('status code (\\d{3})')
+                    if (resultArray != null && resultArray !== undefined) {
+                        res.status(Number.parseInt(resultArray[1]))
+                        return
+                    }
+                    res.send(error.message)
+                    return
+                }
                 for (let [key, value] of Object.entries(transformedResponse.headers)) {
                     res.setHeader(key, value as number | string | ReadonlyArray<string>)
                 }
@@ -33,6 +43,7 @@ export const startHttpProxyServer = async (): Promise<void> => {
         )
             .catch(e => {
                 console.error(e)
+                res.send(e.message)
             })
     })
 
