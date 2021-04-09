@@ -16,6 +16,7 @@
 
   <input
     style="text-indent: 5px;"
+    class="fullwidth"
     on:input={e =>
       activeTabConfigStore.setTargetHttpServerUrl(e.currentTarget.value)}
     value={targetServer}

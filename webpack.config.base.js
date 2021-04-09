@@ -45,6 +45,13 @@ module.exports = {
           },
         },
       },
+      //The below rule is a workaround for the issue : https://github.com/koltyakov/sp-pnp-node/issues/14 which happens in webpack 4
+      {
+        test: /node_modules[\/\\](iconv-lite)[\/\\].+/,
+        resolve: {
+          aliasFields: ['main']
+        }
+      }
     ],
   },
 
