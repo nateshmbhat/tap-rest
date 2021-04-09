@@ -2,7 +2,6 @@
   import { activeTabConfigStore } from "../../../stores";
   import ClientModePage from "./clientModePage/ClientModePage.svelte";
   import MonitorModePage from "./monitorModePage/MonitorModePage.svelte";
-  import MockRpcModePage from "./mockRpcModePage/MockRpcModePage.svelte";
   import { Tabs, TabContent, Tab } from "svelte-materialify/src";
   import { OperationMode } from "../../../commons/types";
 
@@ -33,18 +32,15 @@
       {/each}
     </div>
     <div class="ma-1">
-      <TabContent>
+      <!-- <TabContent>
         <MockRpcModePage />
-      </TabContent>
+      </TabContent> -->
       <TabContent>
         <MonitorModePage />
       </TabContent>
-      <TabContent>
+      <!-- <TabContent>
         <ClientModePage />
-      </TabContent>
+      </TabContent> -->
     </div>
   </Tabs>
 </div>
-<!-- <div>
-    <TabInitializerPage />
-  </div> -->

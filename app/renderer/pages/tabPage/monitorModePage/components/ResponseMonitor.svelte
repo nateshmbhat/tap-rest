@@ -77,6 +77,7 @@
       <ExpansionPanels value={[1]} class="pa-0">
         <ConnectionComponentEditor
           visible={incomingResponse.headers !== undefined}
+          readonly={!responseLiveEditEnabled}
           width="100%"
           height={"300"}
           title="Headers"
@@ -85,6 +86,7 @@
         />
         <ConnectionComponentEditor
           visible={incomingResponse !== undefined}
+          readonly={!responseLiveEditEnabled}
           width="100%"
           height={"500"}
           isJson={isJsonData}

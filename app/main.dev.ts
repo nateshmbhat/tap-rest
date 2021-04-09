@@ -1,7 +1,7 @@
-import { BrowserWindow , app,ipcMain } from "electron";
+import { BrowserWindow, app, ipcMain } from "electron";
 import type { IpcMainChannelInterface } from "./commons/ipc/ipcChannelInterface";
 import { NetworkUtil } from "./commons/utils";
-import { StartServerChannel} from "./main_process/ipc/ipcMainChannels";
+import { OnAppDestoryChannel, StartServerChannel } from "./main_process/ipc/ipcMainChannels";
 
 class Main {
   private mainWindow: BrowserWindow | null = null;
@@ -92,4 +92,4 @@ class Main {
 }
 
 
-new Main().init([new StartServerChannel()])
+new Main().init([new StartServerChannel(), new OnAppDestoryChannel()])

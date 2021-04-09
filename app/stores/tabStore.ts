@@ -21,7 +21,7 @@ function getDefaultTabConfig(): TabConfigModel {
             // incomingResponse: {
             //     data: '{}', headers: {}, status: 200
             // },
-            eventEmitter: new EditorEventEmitter(), dataFlowMode: EditorDataFlowMode.passThrough
+            eventEmitter: new EditorEventEmitter(), dataFlowMode: EditorDataFlowMode.passThrough,
         },
         clientResponseEditorState: { text: '', metadata: '{}' },
         mockRpcEditorText: 'Coming Soon...'

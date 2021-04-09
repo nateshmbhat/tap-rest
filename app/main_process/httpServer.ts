@@ -28,10 +28,11 @@ export const startHttpProxyServer = async (): Promise<void> => {
                 if (error != null && error != undefined) {
                     const resultArray = error.message.match('status code (\\d{3})')
                     if (resultArray != null && resultArray !== undefined && resultArray.length > 0) {
-                        res.status(Number.parseInt(resultArray[1]))
-                        return
+                        res.status(Number.parseInt(resultArray[1])).send(error.message)
                     }
-                    res.send(error.message)
+                    else {
+                        res.status(503).send('Error occured when communicating with Target Server : ' + error.message)
+                    }
                     return
                 }
                 for (let [key, value] of Object.entries(transformedResponse.headers)) {

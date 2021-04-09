@@ -3,8 +3,8 @@ import { requestInterceptor, responseInterceptor } from "../behaviour";
 import { IpcChannel, IpcRendererChannelInterface, IpcRequest } from "../../commons/ipc/ipcChannelInterface";
 import { activeTabConfigStore } from "../../stores";
 import { get } from "svelte/store";
-import { IncomingRequest, IncomingResponse, OperationMode } from "../../commons/types";
 import { StringUtil } from "../../commons/utils/util";
+import type { IncomingRequest, IncomingResponse } from "../../commons/types";
 
 export class RequestHandlerChannel implements IpcRendererChannelInterface {
     getName(): string {
@@ -23,15 +23,15 @@ export class RequestHandlerChannel implements IpcRendererChannelInterface {
             incomingRequest: req
         })
         // rpc call was meant for active tab
-        if (activeTabConfig.operationMode == OperationMode.monitor) {
-            this.handleRequestInMonitorMode(request, event);
-        }
-        else if (activeTabConfig.operationMode == OperationMode.client) {
-            this.handleRequestInClientMode(request, event);
-        }
-        else if (activeTabConfig.operationMode == OperationMode.mockRpc) {
-            this.handleRequestInMockRpcMode(request, event);
-        }
+        // if (activeTabConfig.operationMode == OperationMode.monitor) {
+        this.handleRequestInMonitorMode(request, event);
+        // }
+        // else if (activeTabConfig.operationMode == OperationMode.client) {
+        //     this.handleRequestInClientMode(request, event);
+        // }
+        // else if (activeTabConfig.operationMode == OperationMode.mockRpc) {
+        //     this.handleRequestInMockRpcMode(request, event);
+        // }
     }
 
     private async handleRequestInClientMode(request: IpcRequest, event: IpcRendererEvent) {
