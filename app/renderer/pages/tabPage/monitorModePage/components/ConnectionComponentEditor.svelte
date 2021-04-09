@@ -8,6 +8,7 @@
   export let width: string = "100%";
   export let visible: boolean = true;
   export let isJson: boolean = true;
+  export let readonly: boolean = false;
 </script>
 
 {#if visible}
@@ -18,6 +19,7 @@
       {width}
       {height}
       {text}
+      {readonly}
       on:textChange
     />
   </ExpansionPanel>

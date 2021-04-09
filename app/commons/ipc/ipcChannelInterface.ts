@@ -2,6 +2,7 @@ import type { IpcMainEvent , IpcRendererEvent } from "electron";
 
 export enum IpcChannel {
     startServer = 'startServer',
+    onAppDestroy = 'onAppDestroy',
     onRequest= 'onRequest'
 }
 

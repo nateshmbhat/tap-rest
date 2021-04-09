@@ -12,9 +12,9 @@ export interface AppConfigModel {
 }
 
 export enum OperationMode {
-    mockRpc = 'mockRpc',
+    // mockRpc = 'mockRpc',
     monitor = 'monitor',
-    client = 'client',
+    // client = 'client',
 }
 
 export interface RequestResponseEditorModel {
@@ -61,11 +61,9 @@ export interface TabListConfigModel {
     activeTabIndex: number;
 }
 
-///Enum only applicable for editor when it "not in client mode"
 export enum EditorDataFlowMode {
     passThrough, liveEdit
 }
-
 export interface MonitorRequestEditorModel {
     incomingRequest?: IncomingRequest;
     eventEmitter: EditorEventEmitter;

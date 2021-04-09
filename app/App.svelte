@@ -3,13 +3,12 @@
   import { MaterialApp } from "svelte-materialify";
   import { onDestroy, onMount } from "svelte";
   import { MainProcessInterface } from "./renderer/ipc/ipcMainProcessInterface";
-  import { appConfigStore } from "./stores";
+
   onMount(() => {
     MainProcessInterface.startServer();
   });
   onDestroy(() => {
-    $appConfigStore.proxyHttpServer?.close();
-    $appConfigStore.testHttpServer?.close();
+    MainProcessInterface.onAppDestroy();
   });
 </script>
 

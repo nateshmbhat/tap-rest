@@ -22,6 +22,7 @@
     value={targetServer}
     placeholder="https://api.example.com"
   />
+
   <Divider vertical />
   {#if urlPath}
     <input

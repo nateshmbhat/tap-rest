@@ -27,7 +27,7 @@
   $: requestState = $activeTabConfigStore.monitorRequestEditorState
   let incomingRequest: IncomingRequest | undefined
   $: incomingRequest = requestState.incomingRequest
-
+  
   function changeMonitorRequestState(updateObject: any) {
     activeTabConfigStore.setMonitorRequestEditorState({
       ...requestState,
@@ -72,6 +72,7 @@
     <ExpansionPanels class="pa-0">
       <ConnectionComponentEditor
         visible={incomingRequest.body !== undefined}
+        readonly={!requestLiveEditEnabled}
         width="100%"
         height={"400"}
         title="Body"
@@ -81,6 +82,7 @@
 
       <ConnectionComponentEditor
         visible={incomingRequest.headers !== undefined}
+        readonly={!requestLiveEditEnabled}
         width="100%"
         height={"350"}
         title="Headers"
@@ -90,6 +92,7 @@
 
       <ConnectionComponentEditor
         visible={incomingRequest.query !== undefined}
+        readonly={!requestLiveEditEnabled}
         width="100%"
         height={"150"}
         title="Query Params"
