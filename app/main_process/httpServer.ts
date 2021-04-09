@@ -25,9 +25,9 @@ export const startHttpProxyServer = async (): Promise<void> => {
             transformedResponse => {
                 console.log('transformed response : ', transformedResponse)
                 const error = transformedResponse.error
-                if (error) {
+                if (error != null && error != undefined) {
                     const resultArray = error.message.match('status code (\\d{3})')
-                    if (resultArray != null && resultArray !== undefined) {
+                    if (resultArray != null && resultArray !== undefined && resultArray.length > 0) {
                         res.status(Number.parseInt(resultArray[1]))
                         return
                     }

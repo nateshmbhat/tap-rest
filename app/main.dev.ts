@@ -1,21 +1,7 @@
-import { BrowserWindow } from "electron";
+import { BrowserWindow , app,ipcMain } from "electron";
 import type { IpcMainChannelInterface } from "./commons/ipc/ipcChannelInterface";
 import { NetworkUtil } from "./commons/utils";
 import { StartServerChannel} from "./main_process/ipc/ipcMainChannels";
-
-/**
- * This module executes inside of electron's main process. You can start
- * electron renderer process from here and communicate with the other processes
- * through IPC.
- *
- * When running `yarn build` or `yarn build-main`, this file is compiled to
- * `./app/main.prod.js` using webpack. This gives us some performance wins.
- *
- */
-const {
-  app,
-  ipcMain,
-} = require('electron');
 
 class Main {
   private mainWindow: BrowserWindow | null = null;
