@@ -51,6 +51,13 @@ export class HttpHeaderUtil {
         }
         return false
     }
+
+    static removeHopByHopAndEncodingHeaders(headers: http.IncomingHttpHeaders) : http.IncomingHttpHeaders {
+        const modifiableHeaders = HttpHeaderUtil.removeHopByHopHeaders(headers)
+        delete modifiableHeaders['content-encoding']
+        return modifiableHeaders
+    }
+
     static filterSafeHeaders(headers: http.IncomingHttpHeaders) {
         const unsafeHeaders = new Set([
             'accept-charset',
@@ -96,7 +103,7 @@ export class HttpHeaderUtil {
         for (let [key, value] of Object.entries(headers)) {
             if (key.toLowerCase().trim() === 'connection') {
                 const connectionValues = (value as string).split(',')
-                connectionValues.map(e => e.toLowerCase().trim()).forEach(cv=>hopByHopHeaders.add(cv))
+                connectionValues.map(e => e.toLowerCase().trim()).forEach(cv => hopByHopHeaders.add(cv))
             }
         }
 

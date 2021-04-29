@@ -7,18 +7,12 @@ import { EditorEventType } from './responseStateController';
 import type http from 'http'
 
 
-function handleResponseHeaders(headers: http.IncomingHttpHeaders): http.IncomingHttpHeaders {
-    const modifiableHeaders = HttpHeaderUtil.removeHopByHopHeaders(headers)
-    delete modifiableHeaders['content-encoding']
-    return modifiableHeaders
-}
-
 
 export async function responseInterceptor(response: AxiosResponse): Promise<IncomingResponse> {
     console.log("Incoming response : ", response)
     const activeTabConfig = get(activeTabConfigStore)
     const { data, headers, status } = response
-    const modifiableHeaders = handleResponseHeaders(headers)
+    const modifiableHeaders = HttpHeaderUtil.removeHopByHopAndEncodingHeaders(headers)
 
     let stringifiedData: string;
     if (typeof data === 'string') stringifiedData = data;
