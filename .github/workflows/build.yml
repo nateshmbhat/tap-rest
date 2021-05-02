@@ -26,4 +26,4 @@ jobs:
           # Target architecture for Node to use. Examples: x86, x64. Will use system architecture by default.
           architecture: "x64"
       - run: npm i
-      - run: npm package
+      - run: npm run package
