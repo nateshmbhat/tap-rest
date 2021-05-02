@@ -15,6 +15,7 @@ function getDefaultTabConfig(): TabConfigModel {
             // },
             eventEmitter: new EditorEventEmitter(),
             dataFlowMode: EditorDataFlowMode.passThrough,
+            capturePathSelector: RegExp('.*'),
         },
         clientRequestEditorState: { text: '{}', metadata: '{}' },
         monitorResponseEditorState: {
