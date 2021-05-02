@@ -66,6 +66,7 @@ export enum EditorDataFlowMode {
 }
 export interface MonitorRequestEditorModel {
     incomingRequest?: IncomingRequest;
+    capturePathSelector : RegExp;
     eventEmitter: EditorEventEmitter;
     dataFlowMode: EditorDataFlowMode;
 }

@@ -5,6 +5,7 @@
   import RequestMonitor from "./components/RequestMonitor.svelte";
   import { activeTabConfigStore } from "../../../../stores";
   import { get } from "svelte/store";
+  import CapturePathSelector from "./components/CapturePathSelector.svelte";
 
   $: incomingRequest =
     $activeTabConfigStore.monitorRequestEditorState.incomingRequest;
@@ -22,9 +23,10 @@
 
 <div class="page">
   <ServerConfigController
-    urlPath={incomingRequest===undefined ? undefined  : incomingRequest.path}
+    urlPath={incomingRequest === undefined ? undefined : incomingRequest.path}
     on:changeUrlPath={e => changeUrlPath(e.detail)}
   />
+  <CapturePathSelector />
   <Row class="pl-2">
     <RequestMonitor />
     <Divider vertical />

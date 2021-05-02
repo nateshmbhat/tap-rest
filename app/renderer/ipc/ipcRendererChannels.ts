@@ -3,8 +3,9 @@ import { requestInterceptor, responseInterceptor } from "../behaviour";
 import { IpcChannel, IpcRendererChannelInterface, IpcRequest } from "../../commons/ipc/ipcChannelInterface";
 import { activeTabConfigStore } from "../../stores";
 import { get } from "svelte/store";
-import { StringUtil } from "../../commons/utils/util";
+import { HttpHeaderUtil, StringUtil } from "../../commons/utils/util";
 import type { IncomingRequest, IncomingResponse } from "../../commons/types";
+import { ClientManager } from "../behaviour/clientManager";
 
 export class RequestHandlerChannel implements IpcRendererChannelInterface {
     getName(): string {
@@ -17,6 +18,20 @@ export class RequestHandlerChannel implements IpcRendererChannelInterface {
         }
         const activeTabConfig = get(activeTabConfigStore)
         const req: IncomingRequest = request.params
+
+        const pathSelectorRegex = activeTabConfig.monitorRequestEditorState.capturePathSelector
+        if (!pathSelectorRegex.test(req.path)) {
+            ClientManager.sendRequest(req)
+                .then(res => {
+                    const responseObject: IncomingResponse = { data: res.data, headers: HttpHeaderUtil.removeHopByHopAndEncodingHeaders(res.headers), status: res.status }
+                    event.sender.send(request.responseChannel!, responseObject);
+                })
+                .catch((e: Error) => {
+                    const responseObject: IncomingResponse = { data: '', status: 0, headers: {}, error: e }
+                    event.sender.send(request.responseChannel!, responseObject)
+                });
+            return;
+        }
 
         activeTabConfigStore.setMonitorRequestEditorState({
             ...activeTabConfig.monitorRequestEditorState,
