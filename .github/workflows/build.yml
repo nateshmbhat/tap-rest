@@ -29,3 +29,15 @@ jobs:
       - run: npm run package
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN}}
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          fail_on_unmatched_files: false
+          files: |
+            release/*.AppImage
+            release/*.deb
+            release/*.dmg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
