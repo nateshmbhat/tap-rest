@@ -2,8 +2,9 @@ name: build release
 
 # Controls when the action will run.
 on:
-  push:
-    branches: [github_action_test]
+  release:
+    types: [created]
+    branches: [github_action_test , main]
 
 jobs:
   build:
