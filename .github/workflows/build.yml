@@ -4,9 +4,6 @@ name: build release
 on:
   push:
     branches: [github_action_test]
-  # Triggers the workflow on push or pull request events but only for the main branch
-  release:
-    types: [created]
 
 jobs:
   build:
@@ -40,4 +37,4 @@ jobs:
             release/*.deb
             release/*.dmg
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
