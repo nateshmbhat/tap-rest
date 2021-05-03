@@ -1,6 +1,6 @@
 {
   "name": "tap-rest",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Tap Rest is a tool that aids in proto based dynamic generation of mock server, real time request/response editor and provides client to significantly speed up work for all of frontend, backend devs and testers.",
   "displayName": "Tap Rest",
   "main": "app/main.prod.js",
