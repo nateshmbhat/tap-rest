@@ -1,0 +1,42 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "manukj",
+      "name": "Manu K J",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22499119?v=4",
+      "profile": "https://github.com/manukj",
+      "contributions": [
+        "design","test"
+      ]
+    },
+    {
+      "login": "shreyakishore",
+      "name": "Shreya Kishore",
+      "avatar_url": "https://avatars.githubusercontent.com/u/29401486?v=4",
+      "profile": "https://github.com/shreyakishore",
+      "contributions": [
+        "test"
+      ]
+    },
+    {
+      "login": "sahanaprasad",
+      "name": "Sahana Prasad",
+      "avatar_url": "https://avatars.githubusercontent.com/u/42026982?v=4",
+      "profile": "https://github.com/sahanaprasad",
+      "contributions": [
+        "test"
+      ]
+    },
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "tap-rpc",
+  "projectOwner": "nateshmbhat",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
